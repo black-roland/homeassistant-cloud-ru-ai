@@ -8,6 +8,15 @@
           "api_key": "API key"
         }
       }
+    },
+    "options": {
+      "chat_model": "Model",
+      "max_tokens": "Max Tokens",
+      "temperature": "Temperature",
+      "top_p": "Top P",
+      "recommended": "Recommended",
+      "prompt": "Instructions",
+      "llm_hass_api": "Control Home Assistant"
     }
   }
 }
