@@ -29,5 +29,12 @@
         }
       }
     }
+  },
+  "selector": {
+    "llm_hass_api": {
+      "options": {
+        "none": "No access to entities"
+      }
+    }
   }
 }

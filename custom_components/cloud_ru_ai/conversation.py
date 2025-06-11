@@ -247,7 +247,7 @@ class CloudRUAIConversationEntity(
         model = options.get(CONF_CHAT_MODEL, DEFAULT_CHAT_MODEL)
         messages = [_convert_content_to_param(content) for content in chat_log.content]
 
-        client = self.entry.runtime_data
+        client: openai.AsyncOpenAI = self.entry.runtime_data
 
         # To prevent infinite loops, we limit the number of iterations
         for _iteration in range(MAX_TOOL_ITERATIONS):

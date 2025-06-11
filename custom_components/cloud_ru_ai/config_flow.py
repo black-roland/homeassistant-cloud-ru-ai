@@ -187,7 +187,9 @@ def cloud_ru_ai_config_option_schema(
             CONF_LLM_HASS_API,
             description={"suggested_value": options.get(CONF_LLM_HASS_API)},
             default="none",
-        ): SelectSelector(SelectSelectorConfig(options=hass_apis)),
+        ): SelectSelector(
+            SelectSelectorConfig(options=hass_apis, translation_key=CONF_LLM_HASS_API)
+        ),
         vol.Required(
             CONF_RECOMMENDED, default=options.get(CONF_RECOMMENDED, False)
         ): bool,
