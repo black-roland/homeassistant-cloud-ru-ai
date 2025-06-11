@@ -23,7 +23,7 @@
           "max_tokens": "Maximum tokens to return in response"
         },
         "data_description": {
-          "chat_model": "Model descriptions [can be found in the official documentation](https://cloud.ru/docs/marketplace/ug/services/ai-playground/overview__ai-playground).",
+          "chat_model": "Model descriptions [can be found in the official documentation](https://cloud.ru/marketplace/ai-ml).",
           "llm_hass_api": "Allows the AI to control devices. Uses extra tokens.",
           "prompt": "Instruct how the LLM should respond. This can be a template."
         }
