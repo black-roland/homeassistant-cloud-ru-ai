@@ -2,21 +2,32 @@
   "config": {
     "step": {
       "user": {
-        "description": "Enter your [project ID](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__project-id) and [API key](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys.html) with `ml_inference_ai_marketplace`.",
+        "description": "Enter your [project ID](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__project-id) and [API key](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys.html) (must have `ml_inference_ai_marketplace` role).",
         "data": {
           "project_id": "Project ID",
           "api_key": "API key"
         }
       }
-    },
-    "options": {
-      "chat_model": "Model",
-      "max_tokens": "Max Tokens",
-      "temperature": "Temperature",
-      "top_p": "Top P",
-      "recommended": "Recommended",
-      "prompt": "Instructions",
-      "llm_hass_api": "Control Home Assistant"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "prompt": "Instructions",
+          "llm_hass_api": "Control Home Assistant",
+          "chat_model": "Model",
+          "recommended": "Recommended model settings",
+          "top_p": "Top P",
+          "temperature": "Temperature",
+          "max_tokens": "Maximum tokens to return in response"
+        },
+        "data_description": {
+          "chat_model": "Model descriptions [can be found in the official documentation](https://cloud.ru/docs/marketplace/ug/services/ai-playground/overview__ai-playground).",
+          "llm_hass_api": "Allows the AI to control devices. Uses extra tokens.",
+          "prompt": "Instruct how the LLM should respond. This can be a template."
+        }
+      }
     }
   }
 }

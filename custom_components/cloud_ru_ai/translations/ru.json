@@ -2,21 +2,32 @@
   "config": {
     "step": {
       "user": {
-        "description": "Введите ваш [идентификатор проекта](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__project-id) и [API ключ](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys.html) с `ml_inference_ai_marketplace`.",
+        "description": "Введите [идентификатор проекта](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__project-id) и [ключ API](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys.html) (должен быть создан с ролью `ml_inference_ai_marketplace`).",
         "data": {
           "project_id": "Идентификатор проекта",
           "api_key": "API ключ"
         }
       }
-    },
-    "options": {
-      "chat_model": "Модель",
-      "max_tokens": "Максимальное количество токенов",
-      "temperature": "Температура",
-      "top_p": "Top P",
-      "recommended": "Рекомендуемое",
-      "prompt": "Инструкции",
-      "llm_hass_api": "Управление Home Assistant"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "prompt": "Инструкции",
+          "llm_hass_api": "Управление Home Assistant",
+          "chat_model": "Модель",
+          "recommended": "Рекомендованные настройки",
+          "top_p": "Top-p",
+          "temperature": "Температура",
+          "max_tokens": "Максимальное количество токенов"
+        },
+        "data_description": {
+          "prompt": "Проинструктируйте языковую модель, опишите контекст, возможные ограничения или задайте стиль ответа. Поддерживаются шаблоны.",
+          "chat_model": "Описание моделей [доступны в официальной документации](https://cloud.ru/docs/marketplace/ug/services/ai-playground/overview__ai-playground).",
+          "llm_hass_api": "Включает управление устройствами через ИИ, тратит дополнительных токенов."
+        }
+      }
     }
   }
 }
