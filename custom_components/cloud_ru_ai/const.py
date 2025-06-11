@@ -32,10 +32,21 @@ CONF_TEMPERATURE = "temperature"
 CONF_TOP_P = "top_p"
 
 RECOMMENDED_MAX_TOKENS = 1024
-RECOMMENDED_TEMPERATURE = 0.6
-RECOMMENDED_TOP_P = 0.6
+RECOMMENDED_TEMPERATURE = 0.5
+RECOMMENDED_TOP_P = 0.9
 
 DEFAULT_CHAT_MODEL = "meta-llama/Llama-3.3-70B-Instruct"
 DEFAULT_INSTRUCTIONS_PROMPT_RU = """Ты — голосовой ассистент для Home Assistant.
 Отвечай на вопросы правдиво. Отвечай кратко, чётко и на русском языке.
+
+# Контекст
+
+## Устройства
+
+```csv
+name,state,aliases
+{% for entity in exposed_entities -%}
+{{ entity.name }},{{ entity.state }},{{entity.aliases | join('/')}}
+{% endfor -%}
+```
 """

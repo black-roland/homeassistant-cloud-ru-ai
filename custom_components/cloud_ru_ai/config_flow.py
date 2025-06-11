@@ -23,15 +23,13 @@ import openai
 import voluptuous as vol
 from homeassistant.config_entries import (ConfigEntry, ConfigFlow,
                                           ConfigFlowResult, OptionsFlow)
-from homeassistant.const import CONF_API_KEY, CONF_LLM_HASS_API
+from homeassistant.const import CONF_API_KEY
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import llm
 from homeassistant.helpers.httpx_client import get_async_client
 from homeassistant.helpers.selector import (NumberSelector,
                                             NumberSelectorConfig,
-                                            SelectOptionDict, SelectSelector,
-                                            SelectSelectorConfig,
-                                            TemplateSelector)
+                                            SelectOptionDict, TemplateSelector)
 from homeassistant.helpers.typing import VolDictType
 
 from .const import (CLIENT_API_KEY, CLIENT_BASE_URI, CLIENT_PROJECT_ID,
@@ -130,8 +128,8 @@ class CloudRUAIOptionsFlow(OptionsFlow):
 
         if user_input is not None:
             if user_input[CONF_RECOMMENDED] == self.last_rendered_recommended:
-                if user_input[CONF_LLM_HASS_API] == "none":
-                    user_input.pop(CONF_LLM_HASS_API)
+                # if user_input[CONF_LLM_HASS_API] == "none":
+                #     user_input.pop(CONF_LLM_HASS_API)
                 return self.async_create_entry(title="", data=user_input)
 
             # Re-render the options again, now with the recommended options shown/hidden
@@ -140,7 +138,7 @@ class CloudRUAIOptionsFlow(OptionsFlow):
             options = {
                 CONF_RECOMMENDED: user_input[CONF_RECOMMENDED],
                 CONF_PROMPT: user_input[CONF_PROMPT],
-                CONF_LLM_HASS_API: user_input[CONF_LLM_HASS_API],
+                # CONF_LLM_HASS_API: user_input[CONF_LLM_HASS_API],
             }
 
         schema = cloud_ru_ai_config_option_schema(self.hass, options)
@@ -183,13 +181,13 @@ def cloud_ru_ai_config_option_schema(
             description={"suggested_value": options.get(CONF_CHAT_MODEL)},
             default=DEFAULT_CHAT_MODEL,
         ): str,
-        vol.Optional(
-            CONF_LLM_HASS_API,
-            description={"suggested_value": options.get(CONF_LLM_HASS_API)},
-            default="none",
-        ): SelectSelector(
-            SelectSelectorConfig(options=hass_apis, translation_key=CONF_LLM_HASS_API)
-        ),
+        # vol.Optional(
+        #     CONF_LLM_HASS_API,
+        #     description={"suggested_value": options.get(CONF_LLM_HASS_API)},
+        #     default="none",
+        # ): SelectSelector(
+        #     SelectSelectorConfig(options=hass_apis, translation_key=CONF_LLM_HASS_API)
+        # ),
         vol.Required(
             CONF_RECOMMENDED, default=options.get(CONF_RECOMMENDED, False)
         ): bool,

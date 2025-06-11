@@ -255,9 +255,7 @@ class CloudRUAIConversationEntity(
                 "model": model,
                 "messages": messages,
                 "tools": tools or NOT_GIVEN,
-                "max_completion_tokens": options.get(
-                    CONF_MAX_TOKENS, RECOMMENDED_MAX_TOKENS
-                ),
+                "max_completion_tokens": options.get(CONF_MAX_TOKENS, RECOMMENDED_MAX_TOKENS),
                 "top_p": options.get(CONF_TOP_P, RECOMMENDED_TOP_P),
                 "temperature": options.get(CONF_TEMPERATURE, RECOMMENDED_TEMPERATURE),
                 "user": chat_log.conversation_id,
