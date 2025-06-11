@@ -17,10 +17,10 @@
 
 import json
 from collections.abc import AsyncGenerator, Callable
-from typing import Any, Literal, cast
+from typing import Any, Literal, TypedDict, cast
 
 import openai
-from homeassistant.components import assist_pipeline, conversation
+from homeassistant.components import conversation
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_LLM_HASS_API, MATCH_ALL
 from homeassistant.core import HomeAssistant
@@ -48,6 +48,13 @@ from .const import (CONF_CHAT_MODEL, CONF_MAX_TOKENS, CONF_PROMPT,
 
 # Max number of back and forth with the LLM to generate a response
 MAX_TOOL_ITERATIONS = 10
+
+
+class CurrentToolCall(TypedDict):
+    index: int
+    id: str
+    tool_name: str
+    tool_args: str
 
 
 async def async_setup_entry(
@@ -116,7 +123,8 @@ async def _transform_stream(
     result: AsyncStream[ChatCompletionChunk],
 ) -> AsyncGenerator[conversation.AssistantContentDeltaDict, None]:
     """Transform an Cloud.ru Foundation Models delta stream into HA format."""
-    current_tool_call: dict | None = None
+
+    current_tool_call: CurrentToolCall | None = None
 
     async for chunk in result:
         LOGGER.debug("Received chunk: %s", chunk)
@@ -127,8 +135,8 @@ async def _transform_stream(
                 yield {
                     "tool_calls": [
                         llm.ToolInput(
-                            id=str(current_tool_call["id"]),
-                            tool_name=str(current_tool_call["tool_name"]),
+                            id=current_tool_call["id"],
+                            tool_name=current_tool_call["tool_name"],
                             tool_args=json.loads(current_tool_call["tool_args"]),
                         )
                     ]
@@ -157,7 +165,8 @@ async def _transform_stream(
             raise ValueError("Expected delta with tool call")
 
         if current_tool_call and delta_tool_call.index == current_tool_call["index"]:
-            current_tool_call["tool_args"] += delta_tool_call.function.arguments or ""
+            if current_tool_call is not None:
+                current_tool_call["tool_args"] += delta_tool_call.function.arguments or ""
             continue
 
         # We got tool call with new index, so we need to yield the previous
@@ -172,16 +181,16 @@ async def _transform_stream(
                 ]
             }
 
-        current_tool_call = {
-            "index": delta_tool_call.index,
-            "id": delta_tool_call.id,
-            "tool_name": delta_tool_call.function.name,
-            "tool_args": delta_tool_call.function.arguments or "",
-        }
+        current_tool_call = CurrentToolCall(
+            index=delta_tool_call.index,
+            id=cast(str, delta_tool_call.id),
+            tool_name=cast(str, delta_tool_call.function.name),
+            tool_args=delta_tool_call.function.arguments or "",
+        )
 
 
 class CloudRUAIConversationEntity(
-    conversation.ConversationEntity, conversation.AbstractConversationAgent
+    conversation.ConversationEntity
 ):
     """Cloud.ru Foundation Models conversation agent."""
 
@@ -208,22 +217,6 @@ class CloudRUAIConversationEntity(
     def supported_languages(self) -> list[str] | Literal["*"]:
         """Return a list of supported languages."""
         return MATCH_ALL
-
-    async def async_added_to_hass(self) -> None:
-        """When entity is added to Home Assistant."""
-        await super().async_added_to_hass()
-        assist_pipeline.async_migrate_engine(
-            self.hass, "conversation", self.entry.entry_id, self.entity_id
-        )
-        conversation.async_set_agent(self.hass, self.entry, self)
-        self.entry.async_on_unload(
-            self.entry.add_update_listener(self._async_entry_update_listener)
-        )
-
-    async def async_will_remove_from_hass(self) -> None:
-        """When entity will be removed from Home Assistant."""
-        conversation.async_unset_agent(self.hass, self.entry)
-        await super().async_will_remove_from_hass()
 
     async def _async_handle_message(
         self,
