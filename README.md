@@ -13,7 +13,7 @@
 - Управление через приложение Home Assistant.
 - Поддержка различных задач, включая генерацию контента.
 
-Cloud.ru Foundation Models — облачный сервис, плата за который взимается в соответствии с тарифами.
+Cloud.ru Foundation Models — облачный сервис, плата за который взимается в соответствии с [тарифами](https://cloud.ru/docs/marketplace/ug/services/ai-playground/pricing__ai-playground).
 
 ## Установка и настройка
 
@@ -35,7 +35,10 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 Примеры использования можно найти в [моем блоге](https://mansmarthome.info/tags/ai/) — все статьи про YandexGPT актуальны и для этой интеграции.
 
-TK: Скриншоты.
+<p>
+  <img src="https://github.com/user-attachments/assets/c4f2520d-a1e7-433b-99d6-9db29b2c99f1" height="340px" alt="Assist" />
+  <img src="https://github.com/user-attachments/assets/34f05829-7a10-4087-8596-5087b8310533" height="340px" alt="Morning digests" />
+</p>
 
 ## Поддержка автора
 
