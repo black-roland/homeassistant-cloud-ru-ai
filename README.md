@@ -1,10 +1,8 @@
-<div align="center">
-  <h1>Cloud.ru Foundation Models для Home Assistant</h1>
+# Cloud.ru Foundation Models для Home Assistant
 
-  [![Добавить репозиторий в HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Настроить интеграцию с Cloud.ru](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
+[![Добавить репозиторий в HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Настроить интеграцию с Cloud.ru](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
 
-  <p>Ассистент с искусственным интеллектом для вашего умного дома. Интеграция объединяет возможности Cloud.ru Foundation Models с Home Assistant, позволяя создать полноценную систему управления умным домом с естественным языковым интерфейсом.</p>
-</div>
+Ассистент с искусственным интеллектом для вашего умного дома. Интеграция объединяет возможности [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) с Home Assistant, позволяя создать полноценную систему управления умным домом с естественным языковым интерфейсом.
 
 ## Возможности
 
