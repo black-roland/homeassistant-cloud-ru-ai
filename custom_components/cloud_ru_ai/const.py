@@ -34,7 +34,7 @@ CONF_NO_HA_DEFAULT_PROMPT = "no_ha_default_prompt"
 
 RECOMMENDED_MAX_TOKENS = 1024
 RECOMMENDED_TEMPERATURE = 0.5
-RECOMMENDED_TOP_P = 0.9
+RECOMMENDED_TOP_P = 0.5
 
 DEFAULT_CHAT_MODEL = "meta-llama/Llama-3.3-70B-Instruct"
 DEFAULT_INSTRUCTIONS_PROMPT_RU = """Ты — голосовой ассистент для Home Assistant.
