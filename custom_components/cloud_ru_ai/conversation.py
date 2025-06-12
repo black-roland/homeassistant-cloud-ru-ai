@@ -205,8 +205,8 @@ class CloudRUAIConversationEntity(
         self._attr_device_info = dr.DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=entry.title,
-            manufacturer="Cloud.ru Foundation Models",
-            model="ChatGPT",
+            manufacturer="Cloud.ru",
+            model="Foundation Models",
             entry_type=dr.DeviceEntryType.SERVICE,
         )
         if self.entry.options.get(CONF_LLM_HASS_API):
