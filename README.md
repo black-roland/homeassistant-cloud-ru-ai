@@ -29,7 +29,7 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 1. [Скачайте интеграцию](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) через HACS;
 2. Перезапустите Home Assistant;
 3. Перейдите в **Настройки → Устройства и службы → Добавить интеграцию** или используйте [кнопку настройки](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai);
-4. Введите **иИдентификатор проекта** и **ключ API**, полученные в личном кабинете Cloud.ru.
+4. Введите **идентификатор проекта** и **ключ API**, полученные в личном кабинете Cloud.ru.
 
 ## Примеры использования
 
