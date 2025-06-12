@@ -48,10 +48,12 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 Огромное спасибо всем, кто поддерживает этот проект:
 
-TK: Донат Владимира.
+![Спасибо][donors-list]
 
 ## Уведомление
 
 Данная интеграция является неофициальной и не связана с Cloud.ru. Cloud.ru Foundation Models — это сервис, предоставляемый Cloud.ru.
 
 Данная интеграция не является официальным продуктом Cloud.ru и не поддерживается Cloud.ru.
+
+[donors-list]: https://github.com/user-attachments/assets/71f80a87-5c65-44e4-811a-14bb075caa9c
