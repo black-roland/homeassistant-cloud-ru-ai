@@ -30,6 +30,7 @@ CONF_MAX_TOKENS = "max_tokens"
 CONF_CHAT_MODEL = "chat_model"
 CONF_TEMPERATURE = "temperature"
 CONF_TOP_P = "top_p"
+CONF_NO_HA_DEFAULT_PROMPT = "no_ha_default_prompt"
 
 RECOMMENDED_MAX_TOKENS = 1024
 RECOMMENDED_TEMPERATURE = 0.5
@@ -50,3 +51,4 @@ name,state,aliases
 {% endfor -%}
 ```
 """
+DEFAULT_NO_HA_DEFAULT_PROMPT = False

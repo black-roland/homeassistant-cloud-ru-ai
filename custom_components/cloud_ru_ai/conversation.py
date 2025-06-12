@@ -24,9 +24,9 @@ from homeassistant.components import conversation
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_LLM_HASS_API, MATCH_ALL
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, TemplateError
 from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers import intent, llm
+from homeassistant.helpers import intent, llm, template
 from homeassistant.helpers.entity_platform import \
     AddConfigEntryEntitiesCallback
 from openai._streaming import AsyncStream
@@ -41,9 +41,12 @@ from openai.types.shared_params import FunctionDefinition
 from voluptuous_openapi import convert
 
 from . import CloudRUAIConfigEntry
-from .const import (CONF_CHAT_MODEL, CONF_MAX_TOKENS, CONF_PROMPT,
-                    CONF_TEMPERATURE, CONF_TOP_P, DEFAULT_CHAT_MODEL, DOMAIN,
-                    LOGGER, RECOMMENDED_MAX_TOKENS, RECOMMENDED_TEMPERATURE,
+from .const import (CONF_CHAT_MODEL, CONF_MAX_TOKENS,
+                    CONF_NO_HA_DEFAULT_PROMPT, CONF_PROMPT, CONF_TEMPERATURE,
+                    CONF_TOP_P, DEFAULT_CHAT_MODEL,
+                    DEFAULT_INSTRUCTIONS_PROMPT_RU,
+                    DEFAULT_NO_HA_DEFAULT_PROMPT, DOMAIN, LOGGER,
+                    RECOMMENDED_MAX_TOKENS, RECOMMENDED_TEMPERATURE,
                     RECOMMENDED_TOP_P)
 
 # Max number of back and forth with the LLM to generate a response
@@ -81,8 +84,7 @@ def _format_tool(
 
 
 def _convert_content_to_param(
-    content: conversation.Content,
-) -> ChatCompletionMessageParam:
+        content: conversation.Content, system_prompt_override: str | None = None) -> ChatCompletionMessageParam:
     """Convert any native chat message for this agent to the native format."""
     if content.role == "tool_result":
         assert type(content) is conversation.ToolResultContent
@@ -91,14 +93,11 @@ def _convert_content_to_param(
             tool_call_id=content.tool_call_id,
             content=json.dumps(content.tool_result),
         )
-    if content.role != "assistant" or not content.tool_calls:  # type: ignore[union-attr]
-        role = content.role
-        if role == "system":
-            role = "developer"
-        return cast(
-            ChatCompletionMessageParam,
-            {"role": content.role, "content": content.content},  # type: ignore[union-attr]
-        )
+    if content.role != "assistant" or not content.tool_calls:
+        text = content.content
+        if content.role == "system" and system_prompt_override is not None:
+            text = system_prompt_override
+        return cast(ChatCompletionMessageParam, {"role": content.role, "content": text})
 
     # Handle the Assistant content including tool calls.
     assert type(content) is conversation.AssistantContent
@@ -227,12 +226,14 @@ class CloudRUAIConversationEntity(
         """Call the API."""
         options = self.entry.options
 
+        system_prompt = options.get(CONF_PROMPT, DEFAULT_INSTRUCTIONS_PROMPT_RU)
+
         try:
             await chat_log.async_update_llm_data(
                 DOMAIN,
                 user_input,
                 options.get(CONF_LLM_HASS_API),
-                options.get(CONF_PROMPT),
+                system_prompt,
             )
         except conversation.ConverseError as err:
             return err.as_conversation_result()
@@ -244,8 +245,12 @@ class CloudRUAIConversationEntity(
                 for tool in chat_log.llm_api.tools
             ]
 
+        no_ha_default_prompt = options.get(CONF_NO_HA_DEFAULT_PROMPT, DEFAULT_NO_HA_DEFAULT_PROMPT)
+        system_prompt_override = await self._async_expand_prompt_template(
+            system_prompt, user_input) if no_ha_default_prompt else None
+
         model = options.get(CONF_CHAT_MODEL, DEFAULT_CHAT_MODEL)
-        messages = [_convert_content_to_param(content) for content in chat_log.content]
+        messages = [_convert_content_to_param(content, system_prompt_override) for content in chat_log.content]
 
         client: openai.AsyncOpenAI = self.entry.runtime_data
 
@@ -298,3 +303,17 @@ class CloudRUAIConversationEntity(
         """Handle options update."""
         # Reload as we update device info + entity name + supported features
         await hass.config_entries.async_reload(entry.entry_id)
+
+    async def _async_expand_prompt_template(
+        self, prompt_template: str, user_input: conversation.ConversationInput
+    ) -> str:
+        """Render the prompt template."""
+        try:
+            system_prompt = template.Template(prompt_template, self.hass).async_render(parse_result=False)
+
+            if user_input.extra_system_prompt:
+                system_prompt += user_input.extra_system_prompt
+
+            return system_prompt
+        except TemplateError as err:
+            raise HomeAssistantError("Error rendering prompt template") from err

@@ -33,10 +33,11 @@ from homeassistant.helpers.selector import (NumberSelector,
 from homeassistant.helpers.typing import VolDictType
 
 from .const import (CLIENT_API_KEY, CLIENT_BASE_URI, CLIENT_PROJECT_ID,
-                    CONF_CHAT_MODEL, CONF_MAX_TOKENS, CONF_PROJECT_ID,
-                    CONF_PROMPT, CONF_RECOMMENDED, CONF_TEMPERATURE,
-                    CONF_TOP_P, DEFAULT_CHAT_MODEL,
-                    DEFAULT_INSTRUCTIONS_PROMPT_RU, DOMAIN, LOGGER,
+                    CONF_CHAT_MODEL, CONF_MAX_TOKENS,
+                    CONF_NO_HA_DEFAULT_PROMPT, CONF_PROJECT_ID, CONF_PROMPT,
+                    CONF_RECOMMENDED, CONF_TEMPERATURE, CONF_TOP_P,
+                    DEFAULT_CHAT_MODEL, DEFAULT_INSTRUCTIONS_PROMPT_RU,
+                    DEFAULT_NO_HA_DEFAULT_PROMPT, DOMAIN, LOGGER,
                     RECOMMENDED_MAX_TOKENS, RECOMMENDED_TEMPERATURE,
                     RECOMMENDED_TOP_P)
 
@@ -213,6 +214,11 @@ def cloud_ru_ai_config_option_schema(
                 description={"suggested_value": options.get(CONF_TEMPERATURE)},
                 default=RECOMMENDED_TEMPERATURE,
             ): NumberSelector(NumberSelectorConfig(min=0, max=2, step=0.05)),
+            vol.Optional(
+                CONF_NO_HA_DEFAULT_PROMPT,
+                description={"suggested_value": options.get(CONF_NO_HA_DEFAULT_PROMPT, DEFAULT_NO_HA_DEFAULT_PROMPT)},
+                default=options.get(CONF_NO_HA_DEFAULT_PROMPT, DEFAULT_NO_HA_DEFAULT_PROMPT),
+            ): bool,
         }
     )
     return schema
