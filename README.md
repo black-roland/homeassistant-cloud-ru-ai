@@ -6,13 +6,14 @@ See [description in English](#cloudru-foundation-models-for-home-assistant) belo
 
 [![Добавить репозиторий в HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Настроить интеграцию с Cloud.ru](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
 
-Ассистент с искусственным интеллектом для вашего умного дома. Интеграция объединяет возможности [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) с Home Assistant, позволяя создать полноценную систему управления умным домом с естественным языковым интерфейсом.
+Интеллектуальный ассистент для вашего умного дома. Интеграция объединяет возможности [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) с Home Assistant, позволяя создавать ассистентов на базе популярных открытых LLM.
 
 ## Возможности
 
-- Общение с ассистентом через интерфейс Home Assistant.
-- Управление через приложение Home Assistant.
-- Поддержка различных задач, включая генерацию контента.
+- Общение с ИИ-ассистентом через интерфейс Home Assistant.
+- Доступ к популярным open source моделям: **Llama**, **DeepSeek R1 Distill Llama**, **Qwen** и [другим](https://cloud.ru/marketplace/ai-ml).
+- Генерация текстового контента и ответов на вопросы.
+- Легкое тестирование разных моделей прямо в Home Assistant.
 
 Cloud.ru Foundation Models — облачный сервис, плата за который взимается в соответствии с [тарифами](https://cloud.ru/docs/marketplace/ug/services/ai-playground/pricing__ai-playground).
 
@@ -34,7 +35,7 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 ## Примеры использования
 
-Примеры использования можно найти в [моем блоге](https://mansmarthome.info/tags/ai/) — все статьи про YandexGPT актуальны и для этой интеграции.
+Ищете идеи для вдохновения? В [моём блоге](https://mansmarthome.info/tags/ai/) можно найти парочку практические примеров работы с ИИ-ассистентами в Home Assistant. Все идеи из статей про [YandexGPT](https://github.com/black-roland/homeassistant-yandexgpt) легко адаптируются для этой интеграции.
 
 <p>
   <img src="https://github.com/user-attachments/assets/c4f2520d-a1e7-433b-99d6-9db29b2c99f1" height="340px" alt="Assist" />
@@ -63,13 +64,14 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 [![Add repository to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Configure Cloud.ru Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
 
-An AI-powered assistant for your smart home. This integration combines the capabilities of [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) with Home Assistant, enabling a full-fledged smart home control system with a natural language interface.
+An intelligent assistant for your smart home. This integration combines the capabilities of [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) with Home Assistant, allowing you to create assistants based on popular open-source LLMs.
 
 ## Features
 
 - Communicate with the assistant via the Home Assistant UI.
-- Control via the Home Assistant app.
-- Support for various tasks, including content generation.
+- Access to popular open source LLMs: **Llama**, **DeepSeek R1 Distill Llama**, **Qwen** and [others](https://cloud.ru/marketplace/ai-ml).
+- Text content generation and question answering.
+- Easy testing of different models directly in Home Assistant.
 
 Cloud.ru Foundation Models is a cloud service billed according to [pricing plans](https://cloud.ru/docs/marketplace/ug/services/ai-playground/pricing__ai-playground).
 
