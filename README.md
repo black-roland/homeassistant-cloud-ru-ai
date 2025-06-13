@@ -35,11 +35,11 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 ## Примеры использования
 
-Ищете идеи для вдохновения? В [моём блоге](https://mansmarthome.info/tags/ai/) можно найти парочку практические примеров работы с ИИ-ассистентами в Home Assistant. Все идеи из статей про [YandexGPT](https://github.com/black-roland/homeassistant-yandexgpt) легко адаптируются для этой интеграции.
+Ищете идеи для вдохновения? В [моём блоге](https://mansmarthome.info/tags/ai/) можно найти парочку практических примеров работы с ИИ-ассистентами в Home Assistant. Все идеи из статей про [YandexGPT](https://github.com/black-roland/homeassistant-yandexgpt) легко адаптируются для этой интеграции.
 
 <p>
-  <img src="https://github.com/user-attachments/assets/c4f2520d-a1e7-433b-99d6-9db29b2c99f1" height="340px" alt="Assist" />
-  <img src="https://github.com/user-attachments/assets/34f05829-7a10-4087-8596-5087b8310533" height="340px" alt="Morning digests" />
+  <img src="https://github.com/user-attachments/assets/cf81a975-935e-452a-a811-5e0477b62241" height="400" alt="Assist" />
+  <img src="https://github.com/user-attachments/assets/34f05829-7a10-4087-8596-5087b8310533" height="400" alt="Morning digests" />
 </p>
 
 ## Поддержка автора
