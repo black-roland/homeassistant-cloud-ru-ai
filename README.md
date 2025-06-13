@@ -1,3 +1,7 @@
+See [description in English](#cloudru-foundation-models-for-home-assistant) below 👇
+<br>
+<br>
+
 # Cloud.ru Foundation Models для Home Assistant
 
 [![Добавить репозиторий в HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Настроить интеграцию с Cloud.ru](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
@@ -7,7 +11,6 @@
 ## Возможности
 
 - Общение с ассистентом через интерфейс Home Assistant.
-- Полное управление умным домом: ассистент может управлять устройствами, запускать автоматизации.
 - Управление через приложение Home Assistant.
 - Поддержка различных задач, включая генерацию контента.
 
@@ -53,5 +56,53 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 Данная интеграция является неофициальной и не связана с Cloud.ru. Cloud.ru Foundation Models — это сервис, предоставляемый Cloud.ru.
 
 Данная интеграция не является официальным продуктом Cloud.ru и не поддерживается Cloud.ru.
+
+---
+
+# Cloud.ru Foundation Models for Home Assistant
+
+[![Add repository to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Configure Cloud.ru Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
+
+An AI-powered assistant for your smart home. This integration combines the capabilities of [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) with Home Assistant, enabling a full-fledged smart home control system with a natural language interface.
+
+## Features
+
+- Communicate with the assistant via the Home Assistant UI.
+- Control via the Home Assistant app.
+- Support for various tasks, including content generation.
+
+Cloud.ru Foundation Models is a cloud service billed according to [pricing plans](https://cloud.ru/docs/marketplace/ug/services/ai-playground/pricing__ai-playground).
+
+## Installation & Setup
+
+### Preparation
+
+1. Register on [Cloud.ru](https://console.cloud.ru/registration/?zoneclick=github&retain_url=https://github.com/black-roland/homeassistant-cloud-ru-ai);
+2. Obtain a [project ID](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__project-id);
+3. Generate an [API key](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys__create) with the `ml_inference_ai_marketplace` role;
+4. Save the obtained credentials.
+
+### Installation
+
+1. [Download the integration](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) via HACS;
+2. Restart Home Assistant;
+3. Go to **Settings → Devices & Services → Add Integration** or use the [configuration button](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai);
+4. Enter the **project ID** and **API key** obtained from your Cloud.ru account.
+
+## Donations
+
+If you find this integration useful, you can [buy the author a cup of coffee](https://mansmarthome.info/donate/#donationalerts). Your appreciation is highly valued!
+
+#### Thank you
+
+A huge thank you to everyone supporting this project:
+
+![Thank you][donors-list]
+
+## Notice
+
+This integration is unofficial and not affiliated with Cloud.ru. Cloud.ru Foundation Models is a service provided by Cloud.ru.
+
+This integration is not an official Cloud.ru product and is not supported by Cloud.ru.
 
 [donors-list]: https://github.com/user-attachments/assets/71f80a87-5c65-44e4-811a-14bb075caa9c
