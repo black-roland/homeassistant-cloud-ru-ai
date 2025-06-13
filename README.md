@@ -58,6 +58,10 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 Данная интеграция не является официальным продуктом Cloud.ru и не поддерживается Cloud.ru.
 
+## Лицензия
+
+Код распространяется под лицензией [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0). Интеграция основана на [коде компонента Home Assistant для OpenAI](https://www.home-assistant.io/integrations/openai_conversation/).
+
 ---
 
 # Cloud.ru Foundation Models for Home Assistant
@@ -106,5 +110,9 @@ A huge thank you to everyone supporting this project:
 This integration is unofficial and not affiliated with Cloud.ru. Cloud.ru Foundation Models is a service provided by Cloud.ru.
 
 This integration is not an official Cloud.ru product and is not supported by Cloud.ru.
+
+## License
+
+The code is licensed under [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0). The integration is based on the [Home Assistant OpenAI integration](https://www.home-assistant.io/integrations/openai_conversation/).
 
 [donors-list]: https://github.com/user-attachments/assets/71f80a87-5c65-44e4-811a-14bb075caa9c
