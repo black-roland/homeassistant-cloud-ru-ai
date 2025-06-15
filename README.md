@@ -22,9 +22,10 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 ### Подготовка
 
 1. Зарегистрируйтесь в [Cloud.ru](https://console.cloud.ru/registration/?zoneclick=github&retain_url=https://github.com/black-roland/homeassistant-cloud-ru-ai);
-2. Получите [идентификатор проекта](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__project-id);
-3. Зарегистрируйте [ключ API](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys__create) с ролью `ml_inference_ai_marketplace`;
-4. Сохраните полученные данные.
+2. При необходимости, [подключите сервис в Маркетплейсе](https://marketplace.cloud.ru/spa/ai-playground);
+3. Получите [идентификатор проекта](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__project-id);
+4. Зарегистрируйте [ключ API](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys__create) с ролью `ml_inference_ai_marketplace`;
+5. Сохраните полученные данные.
 
 ### Установка
 
