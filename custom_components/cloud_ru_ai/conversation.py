@@ -288,8 +288,11 @@ class CloudRUAIConversationEntity(
             if not chat_log.unresponded_tool_results:
                 break
 
+        if not isinstance(chat_log.content[-1], conversation.AssistantContent):
+            LOGGER.error("API did not return a valid assistant response")
+            raise HomeAssistantError(translation_domain=DOMAIN, translation_key="no_assistant_response")
+
         intent_response = intent.IntentResponse(language=user_input.language)
-        assert type(chat_log.content[-1]) is conversation.AssistantContent
         intent_response.async_set_speech(chat_log.content[-1].content or "")
         return conversation.ConversationResult(
             response=intent_response,
