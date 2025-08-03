@@ -36,7 +36,14 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 ## Примеры использования
 
-Ищете идеи для вдохновения? В [моём блоге](https://mansmarthome.info/tags/ai/) можно найти парочку практических примеров работы с ИИ-ассистентами в Home Assistant. Все идеи из статей про [YandexGPT](https://github.com/black-roland/homeassistant-yandexgpt) легко адаптируются для этой интеграции.
+Ищете идеи для вдохновения? В [моём блоге](https://mansmarthome.info/tags/ai/) можно найти парочку практических примеров работы с ИИ-ассистентами в Home Assistant. Все идеи из статей про [YandexGPT](https://github.com/black-roland/homeassistant-yandexgpt) легко адаптируются и для этой интеграции.
+
+Хотите сравнить возможности? Обе интеграции предоставляют мощные ИИ-инструменты для Home Assistant, но с разными особенностями:
+
+- Cloud.ru Foundation Models — доступ к открытым моделям (Llama, Qwen, T-Pro и другим).
+- [YandexGPT](https://github.com/black-roland/homeassistant-yandexgpt) — интеграция проприетарной модели Яндекса с поддержкой генерации изображений.
+
+Обе интеграции можно использовать для создания умных ассистентов, утренних дайджестов и других ИИ-функций в вашем умном доме.
 
 <p>
   <img src="https://github.com/user-attachments/assets/cf81a975-935e-452a-a811-5e0477b62241" height="400" alt="Assist" />
@@ -45,7 +52,7 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 ## Поддержка автора
 
-Если интеграция оказалась полезной, вы можете [угостить автора чашечкой кофе](https://mansmarthome.info/donate/#donationalerts). Ваша благодарность ценится!
+Если интеграция оказалась полезной, вы можете [угостить автора чашечкой кофе](https://mansmarthome.info/donate/?utm_source=github&utm_medium=referral&utm_campaign=cloudru#%D1%81%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%B0-%D0%B1%D1%8B%D1%81%D1%82%D1%80%D1%8B%D1%85-%D0%BF%D0%BB%D0%B0%D1%82%D0%B5%D0%B6%D0%B5%D0%B9). Ваша благодарность ценится!
 
 #### Благодарности
 
@@ -98,7 +105,7 @@ Cloud.ru Foundation Models is a cloud service billed according to [pricing plans
 
 ## Donations
 
-If you find this integration useful, you can [buy the author a cup of coffee](https://mansmarthome.info/donate/#donationalerts). Your appreciation is highly valued!
+If you find this integration useful, you can [buy the author a cup of coffee](https://boosty.to/mansmarthome/donate?utm_source=github&utm_medium=referral&utm_campaign=cloudru). Your appreciation is highly valued!
 
 #### Thank you
 
