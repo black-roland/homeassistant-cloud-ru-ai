@@ -32,6 +32,17 @@
       }
     }
   },
+  "exceptions": {
+    "rate_limited": {
+      "message": "Превышен лимит запросов или недостаточно средств"
+    },
+    "api_error": {
+      "message": "Ошибка обращения к API Cloud.ru Foundation Models"
+    },
+    "no_assistant_response": {
+      "message": "Нет ответа от ИИ. Сервис может быть недоступен."
+    }
+  },
   "selector": {
     "llm_hass_api": {
       "options": {

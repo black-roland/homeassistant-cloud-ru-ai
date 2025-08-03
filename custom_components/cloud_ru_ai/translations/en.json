@@ -32,6 +32,17 @@
       }
     }
   },
+  "exceptions": {
+    "rate_limited": {
+      "message": "Rate limited or insufficient funds"
+    },
+    "api_error": {
+      "message": "Error talking to Cloud.ru Foundation Models API"
+    },
+    "no_assistant_response": {
+      "message": "No response from LLM. API might be down."
+    }
+  },
   "selector": {
     "llm_hass_api": {
       "options": {

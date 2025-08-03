@@ -271,10 +271,10 @@ class CloudRUAIConversationEntity(
                 result = await client.chat.completions.create(**model_args)
             except openai.RateLimitError as err:
                 LOGGER.error("Rate limited by Cloud.ru Foundation Models API: %s", err)
-                raise HomeAssistantError("Rate limited or insufficient funds") from err
+                raise HomeAssistantError(translation_domain=DOMAIN, translation_key="rate_limited") from err
             except openai.OpenAIError as err:
                 LOGGER.error("Error talking to Cloud.ru Foundation Models API: %s", err)
-                raise HomeAssistantError("Error talking to Cloud.ru Foundataion Models API") from err
+                raise HomeAssistantError(translation_domain=DOMAIN, translation_key="api_error") from err
 
             messages.extend(
                 [
