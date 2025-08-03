@@ -39,16 +39,5 @@ RECOMMENDED_TOP_P = 0.5
 DEFAULT_CHAT_MODEL = "meta-llama/Llama-3.3-70B-Instruct"
 DEFAULT_INSTRUCTIONS_PROMPT_RU = """Ты — голосовой ассистент для Home Assistant.
 Отвечай на вопросы правдиво. Отвечай кратко, чётко и на русском языке.
-
-# Контекст
-
-## Устройства
-
-```csv
-name,state,aliases
-{% for entity in exposed_entities -%}
-{{ entity.name }},{{ entity.state }},{{entity.aliases | join('/')}}
-{% endfor -%}
-```
 """
 DEFAULT_NO_HA_DEFAULT_PROMPT = False
