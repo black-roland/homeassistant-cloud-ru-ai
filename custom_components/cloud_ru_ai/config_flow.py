@@ -31,6 +31,7 @@ from homeassistant.helpers.selector import (NumberSelector,
                                             NumberSelectorConfig,
                                             SelectOptionDict, SelectSelector,
                                             SelectSelectorConfig,
+                                            SelectSelectorMode,
                                             TemplateSelector)
 from homeassistant.helpers.typing import VolDictType
 
@@ -68,8 +69,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
         default_headers={CLIENT_API_KEY: data[CONF_API_KEY], CLIENT_PROJECT_ID: data[CONF_PROJECT_ID]}
     )
 
-    paginator = await hass.async_add_executor_job(client.with_options(timeout=10).models.list)
-    await paginator
+    await client.with_options(timeout=10).models.list()
 
 
 class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -144,7 +144,15 @@ class CloudRUAIOptionsFlow(OptionsFlow):
                 CONF_LLM_HASS_API: user_input[CONF_LLM_HASS_API],
             }
 
-        schema = cloud_ru_ai_config_option_schema(self.hass, options)
+        client: openai.AsyncOpenAI = self.config_entry.runtime_data
+        model_options: list[SelectOptionDict] | None = None
+        try:
+            response = await client.models.list()
+            model_options = [SelectOptionDict(label=model.id, value=model.id) for model in response.data]
+        except Exception:
+            LOGGER.exception("Failed to fetch models from API, falling back to text input")
+
+        schema = cloud_ru_ai_config_option_schema(self.hass, options, model_options)
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(schema),
@@ -154,6 +162,7 @@ class CloudRUAIOptionsFlow(OptionsFlow):
 def cloud_ru_ai_config_option_schema(
     hass: HomeAssistant,
     options: dict[str, Any] | MappingProxyType[str, Any],
+    model_options: list[SelectOptionDict] | None = None,
 ) -> VolDictType:
     """Return a schema for Cloud.ru Foundation Models completion options."""
     hass_apis: list[SelectOptionDict] = [
@@ -170,6 +179,15 @@ def cloud_ru_ai_config_option_schema(
         for api in llm.async_get_apis(hass)
     )
 
+    chat_model_selector = str
+    if model_options:
+        chat_model_selector = SelectSelector(
+            SelectSelectorConfig(
+                mode=SelectSelectorMode.DROPDOWN,
+                options=model_options,
+            )
+        )
+
     schema: VolDictType = {
         vol.Optional(
             CONF_PROMPT,
@@ -183,7 +201,7 @@ def cloud_ru_ai_config_option_schema(
             CONF_CHAT_MODEL,
             description={"suggested_value": options.get(CONF_CHAT_MODEL)},
             default=DEFAULT_CHAT_MODEL,
-        ): str,
+        ): chat_model_selector,
         vol.Optional(
             CONF_LLM_HASS_API,
             description={"suggested_value": options.get(CONF_LLM_HASS_API)},

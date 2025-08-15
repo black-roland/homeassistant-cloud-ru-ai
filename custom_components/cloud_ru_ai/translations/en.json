@@ -24,7 +24,6 @@
           "no_ha_default_prompt": "Ignore default Home Assistant prompt"
         },
         "data_description": {
-          "chat_model": "Model descriptions [can be found in the official documentation](https://cloud.ru/marketplace/ai-ml).",
           "llm_hass_api": "Allows the AI to control devices. Uses extra tokens.",
           "prompt": "Instruct how the LLM should respond. This can be a template.",
           "no_ha_default_prompt": "Disables automatic appending of time and devices list"
