@@ -24,7 +24,7 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 1. Зарегистрируйтесь в [Cloud.ru](https://console.cloud.ru/registration/?zoneclick=github&retain_url=https://github.com/black-roland/homeassistant-cloud-ru-ai);
 2. При необходимости, [подключите сервис в Маркетплейсе](https://marketplace.cloud.ru/spa/ai-playground);
 3. Получите [идентификатор проекта](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id);
-4. Зарегистрируйте [ключ API](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys__create) с ролью `ml_inference_ai_marketplace`;
+4. Зарегистрируйте [ключ API](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication) с ролью `ml_inference_ai_marketplace`;
 5. Сохраните полученные данные.
 
 ### Установка
@@ -93,7 +93,7 @@ Cloud.ru Foundation Models is a cloud service billed according to [pricing plans
 
 1. Register on [Cloud.ru](https://console.cloud.ru/registration/?zoneclick=github&retain_url=https://github.com/black-roland/homeassistant-cloud-ru-ai);
 2. Obtain a [project ID](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id);
-3. Generate an [API key](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys__create) with the `ml_inference_ai_marketplace` role;
+3. Generate an [API key](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication) with the `ml_inference_ai_marketplace` role;
 4. Save the obtained credentials.
 
 ### Installation
