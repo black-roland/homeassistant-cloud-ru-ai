@@ -19,7 +19,7 @@ import logging
 DOMAIN = "cloud_ru_ai"
 LOGGER = logging.getLogger(__package__)
 
-CLIENT_BASE_URI = "https://foundation-models.api.cloud.ru/api/gigacube/openai/v1"
+CLIENT_BASE_URI = "https://foundation-models.api.cloud.ru/v1"
 CLIENT_API_KEY = "x-api-key"
 CLIENT_PROJECT_ID = "x-project-id"
 
