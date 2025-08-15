@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "description": "Введите [идентификатор проекта](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id) и [ключ API](https://cloud.ru/docs/console_api/ug/topics/guides__static-api-keys.html) (должен быть создан с ролью `ml_inference_ai_marketplace`).",
+        "description": "Введите [идентификатор проекта](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id) и [ключ API](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication).",
         "data": {
           "project_id": "Идентификатор проекта",
           "api_key": "API ключ"
