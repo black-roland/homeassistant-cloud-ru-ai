@@ -121,22 +121,24 @@ def _convert_content_to_param(
 async def _transform_stream(
     result: AsyncStream[ChatCompletionChunk],
 ) -> AsyncGenerator[conversation.AssistantContentDeltaDict, None]:
-    """Transform an Cloud.ru Foundation Models delta stream into HA format."""
-
+    """Transform a Cloud.ru Foundation Models delta stream into HA format."""
     current_tool_call: CurrentToolCall | None = None
 
     async for chunk in result:
         LOGGER.debug("Received chunk: %s", chunk)
-        choice = chunk.choices[0]
 
-        if choice.finish_reason:
+        # Treat empty choices as a finish reason.
+        # Otherwise, `GetLiveContext` will fail with some models.
+        # `GetLiveContext` is the only basic tool that doesn't take any
+        # arguments — that might be the reason.
+        if not chunk.choices or chunk.choices[0].finish_reason:
             if current_tool_call:
                 yield {
                     "tool_calls": [
                         llm.ToolInput(
                             id=current_tool_call["id"],
                             tool_name=current_tool_call["tool_name"],
-                            tool_args=json.loads(current_tool_call["tool_args"]),
+                            tool_args=json.loads(current_tool_call["tool_args"] or "{}"),
                         )
                     ]
                 }
@@ -260,11 +262,17 @@ class CloudRUAIConversationEntity(
                 "model": model,
                 "messages": messages,
                 "tools": tools or NOT_GIVEN,
+                "tool_choice": "auto" if tools else "none",
+                "parallel_tool_calls": False,
                 "max_completion_tokens": options.get(CONF_MAX_TOKENS, RECOMMENDED_MAX_TOKENS),
                 "top_p": options.get(CONF_TOP_P, RECOMMENDED_TOP_P),
                 "temperature": options.get(CONF_TEMPERATURE, RECOMMENDED_TEMPERATURE),
                 "user": chat_log.conversation_id,
                 "stream": True,
+                "stream_options": {
+                    "include_usage": False,
+                    "continuous_usage_stats": False,
+                },
             }
 
             try:
@@ -276,14 +284,18 @@ class CloudRUAIConversationEntity(
                 LOGGER.error("Error talking to Cloud.ru Foundation Models API: %s", err)
                 raise HomeAssistantError(translation_domain=DOMAIN, translation_key="api_error") from err
 
-            messages.extend(
-                [
-                    _convert_content_to_param(content)
-                    async for content in chat_log.async_add_delta_content_stream(
-                        user_input.agent_id, _transform_stream(result)
-                    )
-                ]
-            )
+            try:
+                messages.extend(
+                    [
+                        _convert_content_to_param(content)
+                        async for content in chat_log.async_add_delta_content_stream(
+                            user_input.agent_id, _transform_stream(result)
+                        )
+                    ]
+                )
+            except openai.OpenAIError as err:
+                LOGGER.error("Error talking to Cloud.ru Foundation Models API: %s", err)
+                raise HomeAssistantError(translation_domain=DOMAIN, translation_key="api_error") from err
 
             if not chat_log.unresponded_tool_results:
                 break
