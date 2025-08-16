@@ -24,8 +24,8 @@
           "no_ha_default_prompt": "Ignore default Home Assistant prompt"
         },
         "data_description": {
-          "llm_hass_api": "Allows the AI to control devices. Uses extra tokens.",
           "prompt": "Instruct how the LLM should respond. This can be a template.",
+          "llm_hass_api": "Allows the AI to control devices. **Note**: Assist may not work correctly with some models.",
           "no_ha_default_prompt": "Disables automatic appending of time and devices list"
         }
       }
