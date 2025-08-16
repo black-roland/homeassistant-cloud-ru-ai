@@ -6,12 +6,13 @@ See [description in English](#cloudru-foundation-models-for-home-assistant) belo
 
 [![Добавить репозиторий в HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Настроить интеграцию с Cloud.ru](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
 
-Интеллектуальный ассистент для вашего умного дома. Интеграция объединяет возможности [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) с Home Assistant, позволяя создавать ассистентов на базе популярных открытых LLM.
+Интеллектуальный ассистент для вашего умного дома. Интеграция объединяет возможности [Cloud.ru Foundation Models](https://cloud.ru/products/evolution-foundation-models) с Home Assistant, позволяя создавать ассистентов на базе популярных открытых LLM.
 
 ## Возможности
 
 - Общение с ИИ-ассистентом через интерфейс Home Assistant.
-- Доступ к популярным open source моделям: **Llama**, **DeepSeek R1 Distill Llama**, **Qwen** и [другим](https://cloud.ru/marketplace/ai-ml).
+- Полноценное управление умным домом: ассистент может не только сообщать состояние устройств, но и управлять ими (включать свет, регулировать температуру и т.д.), а также запускать скрипты ([демо](https://boosty.to/mansmarthome/posts/bb1e2d91-6edb-4dfe-b96f-99de636ce844)).
+- Доступ к популярным open source моделям: **GPT-OSS-120b (от OpenAI)**, **Qwen3**, **Llama**, **DeepSeek R1 Distill Llama**, **GLM-4.5** и [другим](https://cloud.ru/products/evolution-foundation-models#dostupnie-modeli).
 - Генерация текстового контента и ответов на вопросы.
 - Легкое тестирование разных моделей прямо в Home Assistant.
 
@@ -64,7 +65,10 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 Данная интеграция является неофициальной и не связана с Cloud.ru. Cloud.ru Foundation Models — это сервис, предоставляемый Cloud.ru.
 
-Данная интеграция не является официальным продуктом Cloud.ru и не поддерживается Cloud.ru.
+Данная интеграция не является официальным продуктом Cloud.ru и не поддерживается Cloud.ru. Разработчик интеграции не несёт ответственности за:
+- Изменения в API Cloud.ru;
+- Прекращение работы сервиса Cloud.ru Foundation Models;
+- Любые возможные неполадки или убытки, вызванные использованием данной интеграции.
 
 ## Лицензия
 
@@ -76,12 +80,13 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 
 [![Add repository to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=black-roland&repository=homeassistant-cloud-ru-ai&category=integration) [![Configure Cloud.ru Integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=cloud_ru_ai)
 
-An intelligent assistant for your smart home. This integration combines the capabilities of [Cloud.ru Foundation Models](https://cloud.ru/marketplace/ai-ml) with Home Assistant, allowing you to create assistants based on popular open-source LLMs.
+An intelligent assistant for your smart home. This integration combines the capabilities of [Cloud.ru Foundation Models](https://cloud.ru/products/evolution-foundation-models) with Home Assistant, allowing you to create assistants based on popular open-source LLMs.
 
 ## Features
 
 - Communicate with the assistant via the Home Assistant UI.
-- Access to popular open source LLMs: **Llama**, **DeepSeek R1 Distill Llama**, **Qwen** and [others](https://cloud.ru/marketplace/ai-ml).
+- Full smart home control: assistant can not only report device states but also control them (turn lights on/off, adjust temperature etc.) and execute scripts ([demo](https://boosty.to/mansmarthome/posts/bb1e2d91-6edb-4dfe-b96f-99de636ce844)).
+- Access to popular open source LLMs: **GPT-OSS-120b (from OpenAI)**, **Qwen3**, **Llama**, **DeepSeek R1 Distill Llama**, **GLM-4.5** and [others](https://cloud.ru/products/evolution-foundation-models#dostupnie-modeli).
 - Text content generation and question answering.
 - Easy testing of different models directly in Home Assistant.
 
@@ -117,7 +122,10 @@ A huge thank you to everyone supporting this project:
 
 This integration is unofficial and not affiliated with Cloud.ru. Cloud.ru Foundation Models is a service provided by Cloud.ru.
 
-This integration is not an official Cloud.ru product and is not supported by Cloud.ru.
+This integration is not an official Cloud.ru product and is not supported by Cloud.ru. The integration developer is not responsible for:
+- Cloud.ru API changes
+- Cloud.ru Foundation Models service discontinuation
+- Any potential issues or damages caused by using this integration
 
 ## License
 
