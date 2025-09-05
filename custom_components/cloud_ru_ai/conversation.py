@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import json
 from collections.abc import AsyncGenerator, Callable
 from typing import Any, Literal, TypedDict, cast
@@ -32,11 +34,13 @@ from homeassistant.helpers.entity_platform import \
 from openai._streaming import AsyncStream
 from openai._types import NOT_GIVEN
 from openai.types.chat import (ChatCompletionAssistantMessageParam,
-                               ChatCompletionChunk, ChatCompletionMessageParam,
-                               ChatCompletionMessageToolCallParam,
+                               ChatCompletionChunk,
+                               ChatCompletionMessageFunctionToolCallParam,
+                               ChatCompletionMessageParam,
                                ChatCompletionToolMessageParam,
                                ChatCompletionToolParam)
-from openai.types.chat.chat_completion_message_tool_call_param import Function
+from openai.types.chat.chat_completion_message_function_tool_call_param import \
+    Function
 from openai.types.shared_params import FunctionDefinition
 from voluptuous_openapi import convert
 
@@ -105,7 +109,7 @@ def _convert_content_to_param(
         role="assistant",
         content=content.content,
         tool_calls=[
-            ChatCompletionMessageToolCallParam(
+            ChatCompletionMessageFunctionToolCallParam(
                 id=tool_call.id,
                 function=Function(
                     arguments=json.dumps(tool_call.tool_args),
@@ -289,7 +293,7 @@ class CloudRUAIConversationEntity(
                     [
                         _convert_content_to_param(content)
                         async for content in chat_log.async_add_delta_content_stream(
-                            user_input.agent_id, _transform_stream(result)
+                            user_input.agent_id, _transform_stream(cast(AsyncStream[ChatCompletionChunk], result))
                         )
                     ]
                 )
