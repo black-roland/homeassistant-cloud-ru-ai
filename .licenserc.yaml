@@ -10,6 +10,7 @@ header:
 
     paths-ignore:
       - "custom_components/cloud_ru_ai/conversation.py"
+      - "custom_components/cloud_ru_ai/entity.py"
 
     comment: on-failure
 
@@ -36,3 +37,4 @@ header:
 
     paths:
       - "custom_components/cloud_ru_ai/conversation.py"
+      - "custom_components/cloud_ru_ai/entity.py"
