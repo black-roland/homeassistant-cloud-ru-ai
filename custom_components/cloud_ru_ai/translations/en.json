@@ -25,7 +25,8 @@
         },
         "data_description": {
           "prompt": "Instruct how the LLM should respond. This can be a template.",
-          "llm_hass_api": "Allows the AI to control devices. **Note**: Assist may not work correctly with some models.",
+          "llm_hass_api": "Allows the AI to control devices.",
+          "chat_model": "🆓 — free, 💰 — paid, 🔧 — supports Assist.",
           "no_ha_default_prompt": "Disables automatic appending of time and devices list"
         }
       }

@@ -78,10 +78,25 @@ def _format_tool(
     tool: llm.Tool, custom_serializer: Callable[[Any], Any] | None
 ) -> ChatCompletionToolParam:
     """Format tool specification."""
-    tool_spec = FunctionDefinition(
-        name=tool.name,
-        parameters=convert(tool.parameters, custom_serializer=custom_serializer),
-    )
+    params = convert(tool.parameters, custom_serializer=custom_serializer)
+
+    # Patch for compatibility: handle "required" field (remove if empty)
+    if not tool.parameters.schema:
+        params = {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        }
+    elif params.get("type") == "object":
+        required = params.get("required")
+        if required in (None, {}, []) or (isinstance(required, list) and not required):
+            params.pop("required", None)
+        elif isinstance(required, dict):
+            params["required"] = list(required.keys())
+        elif not isinstance(required, list):
+            params["required"] = list(required) if required else []
+
+    tool_spec = FunctionDefinition(name=tool.name, parameters=params)
     if tool.description:
         tool_spec["description"] = tool.description
     return ChatCompletionToolParam(type="function", function=tool_spec)
