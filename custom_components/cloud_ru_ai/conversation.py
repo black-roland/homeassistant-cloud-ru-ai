@@ -47,11 +47,11 @@ from voluptuous_openapi import convert
 from . import CloudRUAIConfigEntry
 from .const import (CONF_CHAT_MODEL, CONF_MAX_TOKENS,
                     CONF_NO_HA_DEFAULT_PROMPT, CONF_PROMPT, CONF_TEMPERATURE,
-                    CONF_TOP_P, DEFAULT_CHAT_MODEL,
+                    CONF_THINKING_MODE, CONF_TOP_P, DEFAULT_CHAT_MODEL,
                     DEFAULT_INSTRUCTIONS_PROMPT_RU,
-                    DEFAULT_NO_HA_DEFAULT_PROMPT, DOMAIN, LOGGER,
-                    RECOMMENDED_MAX_TOKENS, RECOMMENDED_TEMPERATURE,
-                    RECOMMENDED_TOP_P)
+                    DEFAULT_NO_HA_DEFAULT_PROMPT, DEFAULT_THINKING_MODE,
+                    DOMAIN, LOGGER, RECOMMENDED_MAX_TOKENS,
+                    RECOMMENDED_TEMPERATURE, RECOMMENDED_TOP_P)
 
 # Max number of back and forth with the LLM to generate a response
 MAX_TOOL_ITERATIONS = 10
@@ -296,6 +296,11 @@ class CloudRUAIConversationEntity(
                     "continuous_usage_stats": False,
                 },
             }
+
+            if not options.get(CONF_THINKING_MODE, DEFAULT_THINKING_MODE):
+                model_args["extra_body"] = {
+                    "chat_template_kwargs": {"enable_thinking": False}  # vLLM option
+                }
 
             try:
                 result = await client.chat.completions.create(**model_args)

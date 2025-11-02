@@ -21,6 +21,7 @@
           "top_p": "Top P",
           "temperature": "Temperature",
           "max_tokens": "Maximum tokens to return in response",
+          "thinking_mode": "Enable thinking mode",
           "no_ha_default_prompt": "Ignore default Home Assistant prompt"
         },
         "data_description": {

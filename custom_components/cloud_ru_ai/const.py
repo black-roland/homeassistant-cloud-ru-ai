@@ -30,6 +30,7 @@ CONF_MAX_TOKENS = "max_tokens"
 CONF_CHAT_MODEL = "chat_model"
 CONF_TEMPERATURE = "temperature"
 CONF_TOP_P = "top_p"
+CONF_THINKING_MODE = "thinking_mode"
 CONF_NO_HA_DEFAULT_PROMPT = "no_ha_default_prompt"
 
 RECOMMENDED_MAX_TOKENS = 1024
@@ -40,4 +41,5 @@ DEFAULT_CHAT_MODEL = "MiniMaxAI/MiniMax-M2"
 DEFAULT_INSTRUCTIONS_PROMPT_RU = """Ты — голосовой ассистент для Home Assistant.
 Отвечай на вопросы правдиво. Отвечай кратко, чётко и на русском языке.
 """
+DEFAULT_THINKING_MODE = False
 DEFAULT_NO_HA_DEFAULT_PROMPT = False

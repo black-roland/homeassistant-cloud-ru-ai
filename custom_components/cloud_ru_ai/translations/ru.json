@@ -21,6 +21,7 @@
           "top_p": "Top-p",
           "temperature": "Температура",
           "max_tokens": "Максимальное число токенов в ответе",
+          "thinking_mode": "Включить режим размышлений",
           "no_ha_default_prompt": "Игнорировать стандартный промпт Home Assistant"
         },
         "data_description": {
