@@ -38,7 +38,7 @@
       "message": "Rate limited or insufficient funds"
     },
     "api_error": {
-      "message": "Error talking to Cloud.ru Foundation Models API"
+      "message": "Error talking to Cloud.ru Foundation Models API: {details}"
     },
     "no_assistant_response": {
       "message": "No response from LLM. API might be down."

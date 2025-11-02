@@ -305,11 +305,15 @@ class CloudRUAIConversationEntity(
             try:
                 result = await client.chat.completions.create(**model_args)
             except openai.RateLimitError as err:
-                LOGGER.error("Rate limited by Cloud.ru Foundation Models API: %s", err)
+                LOGGER.exception("Rate limited by Cloud.ru Foundation Models API: %s", err)
                 raise HomeAssistantError(translation_domain=DOMAIN, translation_key="rate_limited") from err
             except openai.OpenAIError as err:
-                LOGGER.error("Error talking to Cloud.ru Foundation Models API: %s", err)
-                raise HomeAssistantError(translation_domain=DOMAIN, translation_key="api_error") from err
+                LOGGER.exception("Error talking to Cloud.ru Foundation Models API: %s", err)
+                raise HomeAssistantError(
+                    translation_domain=DOMAIN,
+                    translation_key="api_error",
+                    translation_placeholders={"details": str(err)},
+                ) from err
 
             try:
                 messages.extend(
@@ -321,8 +325,12 @@ class CloudRUAIConversationEntity(
                     ]
                 )
             except openai.OpenAIError as err:
-                LOGGER.error("Error talking to Cloud.ru Foundation Models API: %s", err)
-                raise HomeAssistantError(translation_domain=DOMAIN, translation_key="api_error") from err
+                LOGGER.exception("Error talking to Cloud.ru Foundation Models API: %s", err)
+                raise HomeAssistantError(
+                    translation_domain=DOMAIN,
+                    translation_key="api_error",
+                    translation_placeholders={"details": str(err)},
+                ) from err
 
             if not chat_log.unresponded_tool_results:
                 break

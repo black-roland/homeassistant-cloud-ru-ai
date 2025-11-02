@@ -38,7 +38,7 @@
       "message": "Превышен лимит запросов или недостаточно средств"
     },
     "api_error": {
-      "message": "Ошибка обращения к API Cloud.ru Foundation Models"
+      "message": "Ошибка обращения к API Cloud.ru Foundation Models: {details}"
     },
     "no_assistant_response": {
       "message": "Нет ответа от ИИ. Сервис может быть недоступен."
