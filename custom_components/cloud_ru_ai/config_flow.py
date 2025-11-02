@@ -62,14 +62,14 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
 
     Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
     """
-    client = openai.AsyncOpenAI(
+    client = openai.AsyncOpenAI(  # type: ignore[call-arg]
         api_key=data[CONF_API_KEY],
         http_client=get_async_client(hass),
         base_url=CLIENT_BASE_URI,
         default_headers={CLIENT_API_KEY: data[CONF_API_KEY], CLIENT_PROJECT_ID: data[CONF_PROJECT_ID]}
     )
 
-    await client.with_options(timeout=10).models.list()
+    await client.with_options(timeout=10).models.list()  # type: ignore[attr-defined]
 
 
 class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -147,8 +147,15 @@ class CloudRUAIOptionsFlow(OptionsFlow):
         client: openai.AsyncOpenAI = self.config_entry.runtime_data
         model_options: list[SelectOptionDict] | None = None
         try:
-            response = await client.models.list()
-            model_options = [SelectOptionDict(label=model.id, value=model.id) for model in response.data]
+            response = await client.models.list()  # type: ignore[attr-defined]
+            model_options = [
+                SelectOptionDict(
+                    label=f"{'💰' if model.metadata.get('is_billable') else '🆓'} {model.id}",  # type: ignore
+                    value=model.id
+                )
+                for model in response.data
+                if model.metadata.get("type") == "llm"  # type: ignore[attr-defined]
+            ]
         except Exception:
             LOGGER.exception("Failed to fetch models from API, falling back to text input")
 
