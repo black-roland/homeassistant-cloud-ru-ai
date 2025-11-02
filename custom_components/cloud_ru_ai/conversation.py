@@ -166,8 +166,11 @@ async def _transform_stream(
 
         delta = chunk.choices[0].delta
 
-        # We can yield delta messages not continuing or starting tool calls
+        # Skip deltas with only whitespace (e.g., leading \n\n from some models)
         if current_tool_call is None and not delta.tool_calls:
+            content = getattr(delta, "content", None)
+            if content and not content.strip():  # Ignore if content is only whitespace
+                continue
             yield {  # type: ignore[misc]
                 key: value
                 for key in ("role", "content")
