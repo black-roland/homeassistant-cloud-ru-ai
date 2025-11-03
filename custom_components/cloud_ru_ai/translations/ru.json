@@ -7,7 +7,16 @@
           "project_id": "Идентификатор проекта",
           "api_key": "API ключ"
         }
+      },
+      "reconfigure": {
+        "data": {
+          "project_id": "Идентификатор проекта",
+          "api_key": "API ключ"
+        }
       }
+    },
+    "abort": {
+      "reconfigure_successful": "Конфигурация обновлена"
     }
   },
   "options": {

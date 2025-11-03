@@ -7,7 +7,16 @@
           "project_id": "Project ID",
           "api_key": "API key"
         }
+      },
+      "reconfigure": {
+        "data": {
+          "project_id": "Project ID",
+          "api_key": "API key"
+        }
       }
+    },
+    "abort": {
+      "reconfigure_successful": "Configuration updated"
     }
   },
   "options": {
