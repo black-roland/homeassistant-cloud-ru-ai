@@ -22,7 +22,8 @@ from typing import Any
 import openai
 import voluptuous as vol
 from homeassistant.config_entries import (ConfigEntry, ConfigFlow,
-                                          ConfigFlowResult, OptionsFlow)
+                                          ConfigFlowResult, ConfigSubentryFlow,
+                                          SubentryFlowResult)
 from homeassistant.const import CONF_API_KEY, CONF_LLM_HASS_API
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import llm
@@ -33,7 +34,6 @@ from homeassistant.helpers.selector import (NumberSelector,
                                             SelectSelectorConfig,
                                             SelectSelectorMode,
                                             TemplateSelector)
-from homeassistant.helpers.typing import VolDictType
 
 from .const import (CLIENT_API_KEY, CLIENT_BASE_URI, CLIENT_PROJECT_ID,
                     CONF_CHAT_MODEL, CONF_MAX_TOKENS,
@@ -43,7 +43,8 @@ from .const import (CLIENT_API_KEY, CLIENT_BASE_URI, CLIENT_PROJECT_ID,
                     DEFAULT_INSTRUCTIONS_PROMPT_RU,
                     DEFAULT_NO_HA_DEFAULT_PROMPT, DEFAULT_THINKING_MODE,
                     DOC_API_KEY_GUIDE_URL, DOC_PROJECT_ID_GUIDE_URL, DOMAIN,
-                    LOGGER, RECOMMENDED_MAX_TOKENS, RECOMMENDED_TEMPERATURE,
+                    LOGGER, RECOMMENDED_CONVERSATION_OPTIONS,
+                    RECOMMENDED_MAX_TOKENS, RECOMMENDED_TEMPERATURE,
                     RECOMMENDED_TOP_P)
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
@@ -53,17 +54,9 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     }
 )
 
-RECOMMENDED_OPTIONS = {
-    CONF_RECOMMENDED: True,
-    CONF_PROMPT: DEFAULT_INSTRUCTIONS_PROMPT_RU,
-}
-
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
-    """Validate the user input allows us to connect.
-
-    Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
-    """
+    """Validate the user input allows us to connect."""
     client = openai.AsyncOpenAI(
         api_key=data[CONF_API_KEY],
         http_client=get_async_client(hass),
@@ -77,7 +70,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> None:
 class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Cloud.ru Foundation Models."""
 
-    VERSION = 1
+    VERSION = 2
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -85,11 +78,17 @@ class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
         """Handle the initial step."""
         if user_input is None:
             return self.async_show_form(
-                step_id="user", data_schema=STEP_USER_DATA_SCHEMA
+                step_id="user",
+                data_schema=STEP_USER_DATA_SCHEMA,
+                description_placeholders={
+                    "project_id_guide_url": DOC_PROJECT_ID_GUIDE_URL,
+                    "api_key_guide_url": DOC_API_KEY_GUIDE_URL,
+                },
             )
 
         errors: dict[str, str] = {}
 
+        self._async_abort_entries_match(user_input)
         try:
             await validate_input(self.hass, user_input)
         except openai.APIConnectionError:
@@ -103,74 +102,69 @@ class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
             return self.async_create_entry(
                 title="Cloud.ru Foundation Models",
                 data=user_input,
-                options=RECOMMENDED_OPTIONS,
             )
 
-        return self.async_show_form(
-            step_id="user",
-            data_schema=STEP_USER_DATA_SCHEMA,
-            errors=errors,
-            description_placeholders={
-                "project_id_guide_url": DOC_PROJECT_ID_GUIDE_URL,
-                "api_key_guide_url": DOC_API_KEY_GUIDE_URL,
-            }
-        )
+        return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors)
 
-    async def async_step_reconfigure(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
-        """User initiated reconfiguration."""
+    @classmethod
+    def async_get_supported_subentry_types(
+        cls, config_entry: ConfigEntry
+    ) -> dict[str, type[ConfigSubentryFlow]]:
+        """Return subentries supported by this handler."""
+        return {"conversation": ConversationFlowHandler}
 
-        entry = self._get_reconfigure_entry()
 
+class ConversationFlowHandler(ConfigSubentryFlow):
+    """Handle conversation subentry flow."""
+
+    def __init__(self) -> None:
+        """Initialize."""
+        self.last_rendered_recommended = False
+        self.options: dict[str, Any] | MappingProxyType[str, Any] = {}
+
+    @property
+    def _is_new(self) -> bool:
+        """Return if this is a new subentry."""
+        return self.source == "user"
+
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        """Create a new conversation subentry."""
+        self.options = RECOMMENDED_CONVERSATION_OPTIONS.copy()
+        self.last_rendered_recommended = self.options[CONF_RECOMMENDED]
+        return await self.async_step_init(user_input)
+
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        """Reconfigure an existing conversation subentry."""
+        self.options = self._get_reconfigure_subentry().data.copy()
+        self.last_rendered_recommended = self.options.get(CONF_RECOMMENDED, False)
+        return await self.async_step_init(user_input)
+
+    async def async_step_init(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
+        """Manage conversation subentry configuration."""
         if user_input is not None:
-            return self.async_update_reload_and_abort(
-                entry,
-                data_updates=user_input,
-            )
+            recommended = user_input[CONF_RECOMMENDED]
 
-        return self.async_show_form(
-            step_id="reconfigure",
-            data_schema=STEP_USER_DATA_SCHEMA,
-        )
+            if recommended == self.last_rendered_recommended:
+                if user_input.get(CONF_LLM_HASS_API) == "none":
+                    user_input.pop(CONF_LLM_HASS_API, None)
 
-    @staticmethod
-    def async_get_options_flow(
-        config_entry: ConfigEntry,
-    ) -> OptionsFlow:
-        """Create the options flow."""
-        return CloudRUAIOptionsFlow(config_entry)
+                if self._is_new:
+                    return self.async_create_entry(
+                        title=user_input.get(CONF_CHAT_MODEL, DEFAULT_CHAT_MODEL),
+                        data=user_input,
+                    )
+                return self.async_update_and_abort(
+                    self._get_entry(),
+                    self._get_reconfigure_subentry(),
+                    data=user_input,
+                )
 
+            # Re-render with recommended toggle changed
+            self.last_rendered_recommended = recommended
+            self.options = dict(user_input)
 
-class CloudRUAIOptionsFlow(OptionsFlow):
-    """Cloud.ru Foundation Models config flow options handler."""
-
-    def __init__(self, config_entry: ConfigEntry) -> None:
-        """Initialize options flow."""
-        self.last_rendered_recommended = config_entry.options.get(CONF_RECOMMENDED, False)
-
-    async def async_step_init(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
-        """Manage the options."""
-        options: dict[str, Any] | MappingProxyType[str, Any] = self.config_entry.options
-
-        if user_input is not None:
-            if user_input[CONF_RECOMMENDED] == self.last_rendered_recommended:
-                if user_input[CONF_LLM_HASS_API] == "none":
-                    user_input.pop(CONF_LLM_HASS_API)
-                return self.async_create_entry(title="", data=user_input)
-
-            # Re-render the options again, now with the recommended options shown/hidden
-            self.last_rendered_recommended = user_input[CONF_RECOMMENDED]
-
-            options = {
-                CONF_RECOMMENDED: user_input[CONF_RECOMMENDED],
-                CONF_PROMPT: user_input[CONF_PROMPT],
-                CONF_LLM_HASS_API: user_input[CONF_LLM_HASS_API],
-            }
-
-        client: openai.AsyncOpenAI = self.config_entry.runtime_data
+        # Fetch models
+        client: openai.AsyncOpenAI = self._get_entry().runtime_data
         model_options: list[SelectOptionDict] | None = None
         try:
             response = await client.models.list()
@@ -188,12 +182,16 @@ class CloudRUAIOptionsFlow(OptionsFlow):
 
                 model_options.append(SelectOptionDict(label=label, value=model.id))
         except Exception:
-            LOGGER.exception("Failed to fetch models from API, falling back to text input")
+            LOGGER.exception("Failed to fetch models, falling back to text input")
 
-        schema = cloud_ru_ai_config_option_schema(self.hass, options, model_options)
+        schema = cloud_ru_ai_config_option_schema(self.hass, self.options, model_options)
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(schema),
+            description_placeholders={
+                "project_id_guide_url": DOC_PROJECT_ID_GUIDE_URL,
+                "api_key_guide_url": DOC_API_KEY_GUIDE_URL,
+            }
         )
 
 
@@ -201,39 +199,24 @@ def cloud_ru_ai_config_option_schema(
     hass: HomeAssistant,
     options: dict[str, Any] | MappingProxyType[str, Any],
     model_options: list[SelectOptionDict] | None = None,
-) -> VolDictType:
+) -> dict:
     """Return a schema for Cloud.ru Foundation Models completion options."""
+
     hass_apis: list[SelectOptionDict] = [
-        SelectOptionDict(
-            label="No control",
-            value="none",
-        )
+        SelectOptionDict(label="No control", value="none")
     ]
     hass_apis.extend(
-        SelectOptionDict(
-            label=api.name,
-            value=api.id,
-        )
-        for api in llm.async_get_apis(hass)
+        SelectOptionDict(label=api.name, value=api.id) for api in llm.async_get_apis(hass)
     )
 
-    chat_model_selector = str
-    if model_options:
-        chat_model_selector = SelectSelector(
-            SelectSelectorConfig(
-                mode=SelectSelectorMode.DROPDOWN,
-                options=model_options,
-            )
-        )
+    chat_model_selector = str if not model_options else SelectSelector(
+        SelectSelectorConfig(mode=SelectSelectorMode.DROPDOWN, options=model_options)
+    )
 
-    schema: VolDictType = {
+    schema = {
         vol.Optional(
             CONF_PROMPT,
-            description={
-                "suggested_value": options.get(
-                    CONF_PROMPT, llm.DEFAULT_INSTRUCTIONS_PROMPT
-                )
-            },
+            description={"suggested_value": options.get(CONF_PROMPT, DEFAULT_INSTRUCTIONS_PROMPT_RU)},
         ): TemplateSelector(),
         vol.Optional(
             CONF_CHAT_MODEL,
@@ -244,12 +227,8 @@ def cloud_ru_ai_config_option_schema(
             CONF_LLM_HASS_API,
             description={"suggested_value": options.get(CONF_LLM_HASS_API)},
             default="none",
-        ): SelectSelector(
-            SelectSelectorConfig(options=hass_apis, translation_key=CONF_LLM_HASS_API)
-        ),
-        vol.Required(
-            CONF_RECOMMENDED, default=options.get(CONF_RECOMMENDED, False)
-        ): bool,
+        ): SelectSelector(SelectSelectorConfig(options=hass_apis, translation_key=CONF_LLM_HASS_API)),
+        vol.Required(CONF_RECOMMENDED, default=options.get(CONF_RECOMMENDED, False)): bool,
     }
 
     if options.get(CONF_RECOMMENDED):
@@ -284,4 +263,5 @@ def cloud_ru_ai_config_option_schema(
             ): bool,
         }
     )
+
     return schema

@@ -1,7 +1,7 @@
 """Conversation support for Cloud.ru Foundation Models."""
 
 # Copyright 2023-2025 @home-assistant contributors
-# Copyright 2025 @black-roland and contributors
+# Copyright 2026 @black-roland and contributors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ from typing import Any, Literal, TypedDict, cast
 
 import openai
 from homeassistant.components import conversation
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigSubentry
 from homeassistant.const import CONF_LLM_HASS_API, MATCH_ALL
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, TemplateError
@@ -65,13 +65,15 @@ class CurrentToolCall(TypedDict):
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
     config_entry: CloudRUAIConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
-    """Set up conversation entities."""
-    agent = CloudRUAIConversationEntity(config_entry)
-    async_add_entities([agent])
+    """Set up conversation entities from subentries."""
+    for subentry_id, subentry in config_entry.subentries.items():
+        if subentry.subentry_type != "conversation":
+            continue
+        async_add_entities([CloudRUAIConversationEntity(config_entry, subentry)], config_subentry_id=subentry_id)
 
 
 def _format_tool(
@@ -212,30 +214,27 @@ async def _transform_stream(
         )
 
 
-class CloudRUAIConversationEntity(
-    conversation.ConversationEntity
-):
+class CloudRUAIConversationEntity(conversation.ConversationEntity):
     """Cloud.ru Foundation Models conversation agent."""
 
     _attr_has_entity_name = True
     _attr_name = None
     _attr_supports_streaming = True
 
-    def __init__(self, entry: CloudRUAIConfigEntry) -> None:
+    def __init__(self, entry: CloudRUAIConfigEntry, subentry: ConfigSubentry) -> None:
         """Initialize the agent."""
-        self.entry = entry  # type: CloudRUAIConfigEntry
-        self._attr_unique_id = entry.entry_id
+        self.entry = entry
+        self.subentry = subentry
+        self._attr_unique_id = subentry.subentry_id
         self._attr_device_info = dr.DeviceInfo(
-            identifiers={(DOMAIN, entry.entry_id)},
-            name=entry.title,
+            identifiers={(DOMAIN, subentry.subentry_id)},
+            name=subentry.title,
             manufacturer="Cloud.ru",
             model="Foundation Models",
             entry_type=dr.DeviceEntryType.SERVICE,
         )
-        if self.entry.options.get(CONF_LLM_HASS_API):
-            self._attr_supported_features = (
-                conversation.ConversationEntityFeature.CONTROL
-            )
+        if self.subentry.data.get(CONF_LLM_HASS_API):
+            self._attr_supported_features = conversation.ConversationEntityFeature.CONTROL
 
     @property
     def supported_languages(self) -> list[str] | Literal["*"]:
@@ -248,7 +247,7 @@ class CloudRUAIConversationEntity(
         chat_log: conversation.ChatLog,
     ) -> conversation.ConversationResult:
         """Call the API."""
-        options = self.entry.options
+        options = self.subentry.data
 
         system_prompt = options.get(CONF_PROMPT, DEFAULT_INSTRUCTIONS_PROMPT_RU)
 
