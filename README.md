@@ -46,7 +46,7 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 Обе интеграции можно использовать для создания умных ассистентов, утренних дайджестов и других ИИ-функций в вашем умном доме.
 
 <p>
-  <img src="https://github.com/user-attachments/assets/cf81a975-935e-452a-a811-5e0477b62241" height="400" alt="Assist" />
+  <img src="https://github.com/user-attachments/assets/0e590b9a-555a-45ec-a825-f583f7a7e079" height="400" alt="MCP" />
   <img src="https://github.com/user-attachments/assets/34f05829-7a10-4087-8596-5087b8310533" height="400" alt="Morning digests" />
 </p>
 
