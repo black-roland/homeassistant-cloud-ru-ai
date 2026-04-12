@@ -17,6 +17,7 @@
 import logging
 
 from homeassistant.const import CONF_LLM_HASS_API
+from homeassistant.helpers import llm
 
 DOMAIN = "cloud_ru_ai"
 LOGGER = logging.getLogger(__package__)
@@ -52,6 +53,6 @@ DEFAULT_NO_HA_DEFAULT_PROMPT = False
 RECOMMENDED_CONVERSATION_OPTIONS = {
     CONF_RECOMMENDED: True,
     CONF_PROMPT: DEFAULT_INSTRUCTIONS_PROMPT_RU,
-    CONF_LLM_HASS_API: "none",
+    CONF_LLM_HASS_API: [llm.LLM_API_ASSIST],
     CONF_CHAT_MODEL: DEFAULT_CHAT_MODEL,
 }

@@ -16,9 +16,11 @@
 
 from __future__ import annotations
 
+from types import MappingProxyType
+
 import openai
 from homeassistant.config_entries import ConfigEntry, ConfigSubentry
-from homeassistant.const import CONF_API_KEY, Platform
+from homeassistant.const import CONF_API_KEY, CONF_LLM_HASS_API, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
@@ -96,8 +98,15 @@ async def async_migrate_integration(hass: HomeAssistant) -> None:
         use_existing = False
         key = (entry.data[CONF_PROJECT_ID], entry.data[CONF_API_KEY])
 
+        # Old single string / "none" → new list format
+        options = dict(entry.options)
+        if CONF_LLM_HASS_API in options:
+            value = options[CONF_LLM_HASS_API]
+            if isinstance(value, str):
+                options[CONF_LLM_HASS_API] = [] if value == "none" else [value]
+
         subentry = ConfigSubentry(
-            data=entry.options,
+            data=MappingProxyType(options),
             subentry_type="conversation",
             title=entry.title,
             unique_id=None,
@@ -162,6 +171,7 @@ async def async_migrate_integration(hass: HomeAssistant) -> None:
                 title="Cloud.ru Foundation Models",
                 options={},
                 version=2,
+                minor_version=2,
             )
 
     LOGGER.info("Migration to subentries completed successfully")
@@ -170,12 +180,11 @@ async def async_migrate_integration(hass: HomeAssistant) -> None:
 async def async_migrate_entry(hass: HomeAssistant, entry: CloudRUAIConfigEntry) -> bool:
     """Migrate config entry (for future versions)."""
 
-    LOGGER.debug("Migrating from version %s", entry.version)
+    LOGGER.debug("Migrating from version %s.%s", entry.version, entry.minor_version)
 
     if entry.version > 2:
         return False
 
-    # Future version bumps go here
-    hass.config_entries.async_update_entry(entry, version=2)
+    hass.config_entries.async_update_entry(entry, version=2, minor_version=2)
 
     return True

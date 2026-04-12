@@ -71,6 +71,7 @@ class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Cloud.ru Foundation Models."""
 
     VERSION = 2
+    MINOR_VERSION = 2
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -145,7 +146,7 @@ class ConversationFlowHandler(ConfigSubentryFlow):
             recommended = user_input[CONF_RECOMMENDED]
 
             if recommended == self.last_rendered_recommended:
-                if user_input.get(CONF_LLM_HASS_API) == "none":
+                if not user_input.get(CONF_LLM_HASS_API):
                     user_input.pop(CONF_LLM_HASS_API, None)
 
                 if self._is_new:
@@ -203,11 +204,9 @@ def cloud_ru_ai_config_option_schema(
     """Return a schema for Cloud.ru Foundation Models completion options."""
 
     hass_apis: list[SelectOptionDict] = [
-        SelectOptionDict(label="No control", value="none")
+        SelectOptionDict(label=api.name, value=api.id)
+        for api in llm.async_get_apis(hass)
     ]
-    hass_apis.extend(
-        SelectOptionDict(label=api.name, value=api.id) for api in llm.async_get_apis(hass)
-    )
 
     chat_model_selector = str if not model_options else SelectSelector(
         SelectSelectorConfig(mode=SelectSelectorMode.DROPDOWN, options=model_options)
@@ -225,9 +224,14 @@ def cloud_ru_ai_config_option_schema(
         ): chat_model_selector,
         vol.Optional(
             CONF_LLM_HASS_API,
-            description={"suggested_value": options.get(CONF_LLM_HASS_API)},
-            default="none",
-        ): SelectSelector(SelectSelectorConfig(options=hass_apis, translation_key=CONF_LLM_HASS_API)),
+            description={"suggested_value": options.get(CONF_LLM_HASS_API, [])},
+        ): SelectSelector(
+            SelectSelectorConfig(
+                options=hass_apis,
+                multiple=True,
+                translation_key=CONF_LLM_HASS_API,
+            )
+        ),
         vol.Required(CONF_RECOMMENDED, default=options.get(CONF_RECOMMENDED, False)): bool,
     }
 
