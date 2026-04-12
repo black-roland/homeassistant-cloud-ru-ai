@@ -1,6 +1,6 @@
 """Config flow for Cloud.ru Foundation Models integration."""
 
-# Copyright 2025 @black-roland and contributors
+# Copyright 2026 @black-roland and contributors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,8 +42,9 @@ from .const import (CLIENT_API_KEY, CLIENT_BASE_URI, CLIENT_PROJECT_ID,
                     CONF_TOP_P, DEFAULT_CHAT_MODEL,
                     DEFAULT_INSTRUCTIONS_PROMPT_RU,
                     DEFAULT_NO_HA_DEFAULT_PROMPT, DEFAULT_THINKING_MODE,
-                    DOMAIN, LOGGER, RECOMMENDED_MAX_TOKENS,
-                    RECOMMENDED_TEMPERATURE, RECOMMENDED_TOP_P)
+                    DOC_API_KEY_GUIDE_URL, DOC_PROJECT_ID_GUIDE_URL, DOMAIN,
+                    LOGGER, RECOMMENDED_MAX_TOKENS, RECOMMENDED_TEMPERATURE,
+                    RECOMMENDED_TOP_P)
 
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
@@ -106,7 +107,13 @@ class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
             )
 
         return self.async_show_form(
-            step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
+            step_id="user",
+            data_schema=STEP_USER_DATA_SCHEMA,
+            errors=errors,
+            description_placeholders={
+                "project_id_guide_url": DOC_PROJECT_ID_GUIDE_URL,
+                "api_key_guide_url": DOC_API_KEY_GUIDE_URL,
+            }
         )
 
     async def async_step_reconfigure(

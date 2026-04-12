@@ -23,6 +23,9 @@ CLIENT_BASE_URI = "https://foundation-models.api.cloud.ru/v1"
 CLIENT_API_KEY = "x-api-key"
 CLIENT_PROJECT_ID = "x-project-id"
 
+DOC_PROJECT_ID_GUIDE_URL = "https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id"
+DOC_API_KEY_GUIDE_URL = "https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication"
+
 CONF_PROJECT_ID = "project_id"
 CONF_PROMPT = "prompt"
 CONF_RECOMMENDED = "recommended"

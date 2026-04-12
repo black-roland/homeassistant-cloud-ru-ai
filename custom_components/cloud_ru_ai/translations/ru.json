@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "description": "Введите [идентификатор проекта](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id) и [ключ API](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication).",
+        "description": "Введите [идентификатор проекта]({project_id_guide_url}) и [ключ API]({api_key_guide_url}).",
         "data": {
           "project_id": "Идентификатор проекта",
           "api_key": "API ключ"
