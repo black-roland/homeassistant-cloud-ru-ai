@@ -12,21 +12,20 @@ See [description in English](#cloudru-foundation-models-for-home-assistant) belo
 
 - Общение с ИИ-ассистентом через интерфейс Home Assistant.
 - Полноценное управление умным домом: ассистент может не только сообщать состояние устройств, но и управлять ими (включать свет, регулировать температуру и т.д.), а также запускать скрипты ([демо](https://boosty.to/mansmarthome/posts/bb1e2d91-6edb-4dfe-b96f-99de636ce844)).
-- Доступ к популярным open source моделям: **GPT-OSS-120b (от OpenAI)**, **Qwen3**, **Llama**, **DeepSeek R1 Distill Llama**, **GLM-4.5** и [другим](https://cloud.ru/products/evolution-foundation-models#dostupnie-modeli).
+- Доступ к популярным open source моделям: **MiniMax-M2**, **GLM-4.6**, **Qwen3-Coder-480B-A35B-Instruct**, **T-pro-it-2.0** и [другим](https://cloud.ru/products/evolution-ai-factory/catalog-foundation-models).
 - Генерация текстового контента и ответов на вопросы.
 - Легкое тестирование разных моделей прямо в Home Assistant.
 
-Cloud.ru Foundation Models — облачный сервис, плата за который взимается в соответствии с [тарифами](https://cloud.ru/docs/marketplace/ug/services/ai-playground/pricing__ai-playground).
+Cloud.ru Foundation Models — облачный сервис, плата за который взимается в соответствии с [тарифами](https://cloud.ru/products/evolution-ai-factory/catalog-foundation-models).
 
 ## Установка и настройка
 
 ### Подготовка
 
 1. Зарегистрируйтесь в [Cloud.ru](https://console.cloud.ru/registration/?zoneclick=github&retain_url=https://github.com/black-roland/homeassistant-cloud-ru-ai);
-2. При необходимости, [подключите сервис в Маркетплейсе](https://marketplace.cloud.ru/spa/ai-playground);
-3. Получите [идентификатор проекта](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id);
-4. Зарегистрируйте [ключ API](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication) с ролью `ml_inference_ai_marketplace`;
-5. Сохраните полученные данные.
+2. Получите [идентификатор проекта](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id);
+3. Создайте [сервисный аккаунт и сгенерируйте для него ключ API](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication);
+4. Сохраните полученные данные.
 
 ### Установка
 
@@ -86,7 +85,7 @@ An intelligent assistant for your smart home. This integration combines the capa
 
 - Communicate with the assistant via the Home Assistant UI.
 - Full smart home control: assistant can not only report device states but also control them (turn lights on/off, adjust temperature etc.) and execute scripts ([demo](https://boosty.to/mansmarthome/posts/bb1e2d91-6edb-4dfe-b96f-99de636ce844)).
-- Access to popular open source LLMs: **GPT-OSS-120b (from OpenAI)**, **Qwen3**, **Llama**, **DeepSeek R1 Distill Llama**, **GLM-4.5** and [others](https://cloud.ru/products/evolution-foundation-models#dostupnie-modeli).
+- Access to popular open source LLMs: **MiniMax-M2**, **GLM-4.6**, **Qwen3-Coder-480B-A35B-Instruct**, **T-pro-it-2.0** and [others](https://cloud.ru/products/evolution-foundation-models).
 - Text content generation and question answering.
 - Easy testing of different models directly in Home Assistant.
 
@@ -98,7 +97,7 @@ Cloud.ru Foundation Models is a cloud service billed according to [pricing plans
 
 1. Register on [Cloud.ru](https://console.cloud.ru/registration/?zoneclick=github&retain_url=https://github.com/black-roland/homeassistant-cloud-ru-ai);
 2. Obtain a [project ID](https://cloud.ru/docs/administration/ug/topics/guides__projects#guides-projects-id);
-3. Generate an [API key](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication) with the `ml_inference_ai_marketplace` role;
+3. Create [a service account and generate an API key](https://cloud.ru/docs/foundation-models/ug/topics/api-ref__authentication);
 4. Save the obtained credentials.
 
 ### Installation
