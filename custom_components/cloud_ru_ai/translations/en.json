@@ -67,6 +67,9 @@
         "init": {
           "data": {
             "chat_model": "Model"
+          },
+          "data_description": {
+            "chat_model": "🆓 — free models, 💰 — paid models"
           }
         }
       }

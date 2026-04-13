@@ -69,6 +69,8 @@ Cloud.ru Foundation Models — облачный сервис, плата за к
 - Прекращение работы сервиса Cloud.ru Foundation Models;
 - Любые возможные неполадки или убытки, вызванные использованием данной интеграции.
 
+Информация о стоимости моделей предоставлена исключительно в справочных целях. Актуальные условия, цены и ограничения доступны на [официальном сайте Cloud.ru](https://cloud.ru/products/evolution-ai-factory/catalog-foundation-models).
+
 ## Лицензия
 
 Код распространяется под лицензией [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0). Интеграция основана на [коде компонента Home Assistant для OpenAI](https://www.home-assistant.io/integrations/openai_conversation/).
@@ -125,6 +127,8 @@ This integration is not an official Cloud.ru product and is not supported by Clo
 - Cloud.ru API changes
 - Cloud.ru Foundation Models service discontinuation
 - Any potential issues or damages caused by using this integration
+
+Information about the cost of the models is provided for reference purposes only. Current terms, prices, and restrictions are available on [the official Cloud.ru website](https://cloud.ru/products/evolution-ai-factory/catalog-foundation-models).
 
 ## License
 

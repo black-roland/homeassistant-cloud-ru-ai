@@ -21,7 +21,7 @@ from typing import Any
 
 import openai
 import voluptuous as vol
-from homeassistant.config_entries import (ConfigEntry, ConfigFlow,
+from homeassistant.config_entries import (SOURCE_USER, ConfigEntry, ConfigFlow,
                                           ConfigFlowResult, ConfigSubentryFlow,
                                           SubentryFlowResult)
 from homeassistant.const import CONF_API_KEY, CONF_LLM_HASS_API
@@ -205,9 +205,29 @@ class AITaskDataFlowHandler(ConfigSubentryFlow):
 
     def __init__(self) -> None:
         """Initialize."""
+        self.options: dict[str, Any] = {}
         self.models: dict[str, str] = {}
 
+    @property
+    def _is_new(self) -> bool:
+        """Return if this is a new subentry."""
+        return self.source == SOURCE_USER
+
     async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> SubentryFlowResult:
+        """User flow to create an AI task."""
+        self.options = {}
+        return await self.async_step_init(user_input)
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> SubentryFlowResult:
+        """Handle reconfiguration of an AI task."""
+        self.options = self._get_reconfigure_subentry().data.copy()
+        return await self.async_step_init(user_input)
+
+    async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> SubentryFlowResult:
         """User flow to create / reconfigure AI task."""
@@ -215,7 +235,7 @@ class AITaskDataFlowHandler(ConfigSubentryFlow):
         if user_input is not None:
             model_id = user_input[CONF_CHAT_MODEL]
             title = self.models.get(model_id, model_id)
-            if self.source == "user":
+            if self._is_new:
                 return self.async_create_entry(title=title, data=user_input)
             return self.async_update_and_abort(
                 self._get_entry(),
@@ -233,12 +253,13 @@ class AITaskDataFlowHandler(ConfigSubentryFlow):
                 if model.metadata.get("type") != "llm":  # type: ignore[attr-defined]
                     continue
 
+                if not getattr(model, "structure_output", False):
+                    continue
+
                 is_billable = model.metadata.get("is_billable", True)  # type: ignore[attr-defined]
                 billable_emoji = "🆓" if not is_billable else "💰"
 
-                tools_emoji = " 🔧" if getattr(model, "function_calling", False) else ""
-
-                label = f"{model.id} {billable_emoji}{tools_emoji}"
+                label = f"{model.id} {billable_emoji}"
 
                 model_options.append(SelectOptionDict(label=label, value=model.id))
                 self.models[model.id] = label
@@ -247,10 +268,12 @@ class AITaskDataFlowHandler(ConfigSubentryFlow):
             return self.async_abort(reason="cannot_connect")
 
         return self.async_show_form(
-            step_id="user",
+            step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_CHAT_MODEL, default=DEFAULT_CHAT_MODEL): SelectSelector(
+                    vol.Required(
+                        CONF_CHAT_MODEL, default=self.options.get(CONF_CHAT_MODEL, DEFAULT_CHAT_MODEL)
+                    ): SelectSelector(
                         SelectSelectorConfig(
                             options=model_options,
                             mode=SelectSelectorMode.DROPDOWN,
