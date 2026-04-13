@@ -18,31 +18,21 @@
 from __future__ import annotations
 
 import json
-from collections.abc import AsyncGenerator, Callable
-from typing import Any, Literal, TypedDict, cast
+from collections.abc import AsyncGenerator
+from typing import Literal, TypedDict, cast
 
 import openai
 from homeassistant.components import conversation
-from homeassistant.config_entries import ConfigEntry, ConfigSubentry
+from homeassistant.config_entries import ConfigSubentry
 from homeassistant.const import CONF_LLM_HASS_API, MATCH_ALL
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError, TemplateError
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import intent, llm, template
 from homeassistant.helpers.entity_platform import \
     AddConfigEntryEntitiesCallback
 from openai._streaming import AsyncStream
 from openai._types import NOT_GIVEN
-from openai.types.chat import (ChatCompletionAssistantMessageParam,
-                               ChatCompletionChunk,
-                               ChatCompletionMessageFunctionToolCallParam,
-                               ChatCompletionMessageParam,
-                               ChatCompletionToolMessageParam,
-                               ChatCompletionToolParam)
-from openai.types.chat.chat_completion_message_function_tool_call_param import \
-    Function
-from openai.types.shared_params import FunctionDefinition
-from voluptuous_openapi import convert
+from openai.types.chat import ChatCompletionChunk, ChatCompletionToolParam
 
 from . import CloudRUAIConfigEntry
 from .const import (CONF_CHAT_MODEL, CONF_MAX_TOKENS,
@@ -52,6 +42,8 @@ from .const import (CONF_CHAT_MODEL, CONF_MAX_TOKENS,
                     DEFAULT_NO_HA_DEFAULT_PROMPT, DEFAULT_THINKING_MODE,
                     DOMAIN, LOGGER, RECOMMENDED_MAX_TOKENS,
                     RECOMMENDED_TEMPERATURE, RECOMMENDED_TOP_P)
+from .entity import (CloudRUAIEntity, _convert_content_to_chat_message,
+                     _format_tool)
 
 # Max number of back and forth with the LLM to generate a response
 MAX_TOOL_ITERATIONS = 10
@@ -74,69 +66,6 @@ async def async_setup_entry(
         if subentry.subentry_type != "conversation":
             continue
         async_add_entities([CloudRUAIConversationEntity(config_entry, subentry)], config_subentry_id=subentry_id)
-
-
-def _format_tool(
-    tool: llm.Tool, custom_serializer: Callable[[Any], Any] | None
-) -> ChatCompletionToolParam:
-    """Format tool specification."""
-    params = convert(tool.parameters, custom_serializer=custom_serializer)
-
-    # Patch for compatibility: handle "required" field (remove if empty)
-    if not tool.parameters.schema:
-        params = {
-            "type": "object",
-            "properties": {},
-            "additionalProperties": False,
-        }
-    elif params.get("type") == "object":
-        required = params.get("required")
-        if required in (None, {}, []) or (isinstance(required, list) and not required):
-            params.pop("required", None)
-        elif isinstance(required, dict):
-            params["required"] = list(required.keys())
-        elif not isinstance(required, list):
-            params["required"] = list(required) if required else []
-
-    tool_spec = FunctionDefinition(name=tool.name, parameters=params)
-    if tool.description:
-        tool_spec["description"] = tool.description
-    return ChatCompletionToolParam(type="function", function=tool_spec)
-
-
-def _convert_content_to_param(
-        content: conversation.Content, system_prompt_override: str | None = None) -> ChatCompletionMessageParam:
-    """Convert any native chat message for this agent to the native format."""
-    if content.role == "tool_result":
-        assert type(content) is conversation.ToolResultContent
-        return ChatCompletionToolMessageParam(
-            role="tool",
-            tool_call_id=content.tool_call_id,
-            content=json.dumps(content.tool_result),
-        )
-    if content.role != "assistant" or not content.tool_calls:
-        text = content.content
-        if content.role == "system" and system_prompt_override is not None:
-            text = system_prompt_override
-        return cast(ChatCompletionMessageParam, {"role": content.role, "content": text})
-
-    # Handle the Assistant content including tool calls.
-    assert type(content) is conversation.AssistantContent
-    return ChatCompletionAssistantMessageParam(
-        role="assistant",
-        content=content.content,
-        tool_calls=[
-            ChatCompletionMessageFunctionToolCallParam(
-                id=tool_call.id,
-                function=Function(
-                    arguments=json.dumps(tool_call.tool_args),
-                    name=tool_call.tool_name,
-                ),
-                type="function",
-            )
-            for tool_call in content.tool_calls
-        ],
-    )
 
 
 async def _transform_stream(
@@ -214,25 +143,14 @@ async def _transform_stream(
         )
 
 
-class CloudRUAIConversationEntity(conversation.ConversationEntity):
+class CloudRUAIConversationEntity(CloudRUAIEntity, conversation.ConversationEntity):
     """Cloud.ru Foundation Models conversation agent."""
 
-    _attr_has_entity_name = True
-    _attr_name = None
     _attr_supports_streaming = True
 
     def __init__(self, entry: CloudRUAIConfigEntry, subentry: ConfigSubentry) -> None:
-        """Initialize the agent."""
-        self.entry = entry
-        self.subentry = subentry
-        self._attr_unique_id = subentry.subentry_id
-        self._attr_device_info = dr.DeviceInfo(
-            identifiers={(DOMAIN, subentry.subentry_id)},
-            name=subentry.title,
-            manufacturer="Cloud.ru",
-            model="Foundation Models",
-            entry_type=dr.DeviceEntryType.SERVICE,
-        )
+        """Initialize."""
+        super().__init__(entry, subentry)
         if self.subentry.data.get(CONF_LLM_HASS_API):
             self._attr_supported_features = conversation.ConversationEntityFeature.CONTROL
 
@@ -247,8 +165,8 @@ class CloudRUAIConversationEntity(conversation.ConversationEntity):
         chat_log: conversation.ChatLog,
     ) -> conversation.ConversationResult:
         """Call the API."""
-        options = self.subentry.data
 
+        options = self.subentry.data
         system_prompt = options.get(CONF_PROMPT, DEFAULT_INSTRUCTIONS_PROMPT_RU)
 
         try:
@@ -263,17 +181,14 @@ class CloudRUAIConversationEntity(conversation.ConversationEntity):
 
         tools: list[ChatCompletionToolParam] | None = None
         if chat_log.llm_api:
-            tools = [
-                _format_tool(tool, chat_log.llm_api.custom_serializer)
-                for tool in chat_log.llm_api.tools
-            ]
+            tools = [_format_tool(tool, chat_log.llm_api.custom_serializer) for tool in chat_log.llm_api.tools]
 
         no_ha_default_prompt = options.get(CONF_NO_HA_DEFAULT_PROMPT, DEFAULT_NO_HA_DEFAULT_PROMPT)
         system_prompt_override = await self._async_expand_prompt_template(
             system_prompt, user_input) if no_ha_default_prompt else None
 
         model = options.get(CONF_CHAT_MODEL, DEFAULT_CHAT_MODEL)
-        messages = [_convert_content_to_param(content, system_prompt_override) for content in chat_log.content]
+        messages = [_convert_content_to_chat_message(content, system_prompt_override) for content in chat_log.content]
 
         client: openai.AsyncOpenAI = self.entry.runtime_data
 
@@ -317,7 +232,7 @@ class CloudRUAIConversationEntity(conversation.ConversationEntity):
             try:
                 messages.extend(
                     [
-                        _convert_content_to_param(content)
+                        _convert_content_to_chat_message(content)
                         async for content in chat_log.async_add_delta_content_stream(
                             user_input.agent_id, _transform_stream(cast(AsyncStream[ChatCompletionChunk], result))
                         )
@@ -345,13 +260,6 @@ class CloudRUAIConversationEntity(conversation.ConversationEntity):
             conversation_id=chat_log.conversation_id,
             continue_conversation=chat_log.continue_conversation,
         )
-
-    async def _async_entry_update_listener(
-        self, hass: HomeAssistant, entry: ConfigEntry
-    ) -> None:
-        """Handle options update."""
-        # Reload as we update device info + entity name + supported features
-        await hass.config_entries.async_reload(entry.entry_id)
 
     async def _async_expand_prompt_template(
         self, prompt_template: str, user_input: conversation.ConversationInput

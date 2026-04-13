@@ -52,6 +52,24 @@
           }
         }
       }
+    },
+    "ai_task_data": {
+      "initiate_flow": {
+        "reconfigure": "Перенастроить ИИ-задачу",
+        "user": "Добавить ИИ-задачу"
+      },
+      "entry_type": "ИИ-задача",
+      "abort": {
+        "cannot_connect": "Не удаётся подключиться к Cloud.ru",
+        "unknown": "Неизвестная ошибка"
+      },
+      "step": {
+        "init": {
+          "data": {
+            "chat_model": "Модель"
+          }
+        }
+      }
     }
   },
   "exceptions": {

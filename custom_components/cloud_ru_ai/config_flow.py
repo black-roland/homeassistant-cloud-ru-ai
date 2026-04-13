@@ -112,7 +112,10 @@ class CloudRUAIConfigFlow(ConfigFlow, domain=DOMAIN):
         cls, config_entry: ConfigEntry
     ) -> dict[str, type[ConfigSubentryFlow]]:
         """Return subentries supported by this handler."""
-        return {"conversation": ConversationFlowHandler}
+        return {
+            "conversation": ConversationFlowHandler,
+            "ai_task_data": AITaskDataFlowHandler,
+        }
 
 
 class ConversationFlowHandler(ConfigSubentryFlow):
@@ -142,6 +145,7 @@ class ConversationFlowHandler(ConfigSubentryFlow):
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> SubentryFlowResult:
         """Manage conversation subentry configuration."""
+
         if user_input is not None:
             recommended = user_input[CONF_RECOMMENDED]
 
@@ -193,6 +197,67 @@ class ConversationFlowHandler(ConfigSubentryFlow):
                 "project_id_guide_url": DOC_PROJECT_ID_GUIDE_URL,
                 "api_key_guide_url": DOC_API_KEY_GUIDE_URL,
             }
+        )
+
+
+class AITaskDataFlowHandler(ConfigSubentryFlow):
+    """Handle AI task subentry flow."""
+
+    def __init__(self) -> None:
+        """Initialize."""
+        self.models: dict[str, str] = {}
+
+    async def async_step_user(
+        self, user_input: dict[str, Any] | None = None
+    ) -> SubentryFlowResult:
+        """User flow to create / reconfigure AI task."""
+
+        if user_input is not None:
+            model_id = user_input[CONF_CHAT_MODEL]
+            title = self.models.get(model_id, model_id)
+            if self.source == "user":
+                return self.async_create_entry(title=title, data=user_input)
+            return self.async_update_and_abort(
+                self._get_entry(),
+                self._get_reconfigure_subentry(),
+                data=user_input,
+            )
+
+        # Fetch models
+        client: openai.AsyncOpenAI = self._get_entry().runtime_data
+        model_options: list[SelectOptionDict] = []
+        self.models = {}
+        try:
+            response = await client.models.list()
+            for model in response.data:
+                if model.metadata.get("type") != "llm":  # type: ignore[attr-defined]
+                    continue
+
+                is_billable = model.metadata.get("is_billable", True)  # type: ignore[attr-defined]
+                billable_emoji = "🆓" if not is_billable else "💰"
+
+                tools_emoji = " 🔧" if getattr(model, "function_calling", False) else ""
+
+                label = f"{model.id} {billable_emoji}{tools_emoji}"
+
+                model_options.append(SelectOptionDict(label=label, value=model.id))
+                self.models[model.id] = label
+        except Exception:
+            LOGGER.exception("Failed to fetch models for AI Task")
+            return self.async_abort(reason="cannot_connect")
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_CHAT_MODEL, default=DEFAULT_CHAT_MODEL): SelectSelector(
+                        SelectSelectorConfig(
+                            options=model_options,
+                            mode=SelectSelectorMode.DROPDOWN,
+                        )
+                    ),
+                }
+            ),
         )
 
 

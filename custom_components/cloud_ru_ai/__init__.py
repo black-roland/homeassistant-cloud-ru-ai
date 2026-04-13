@@ -30,7 +30,7 @@ from homeassistant.helpers.httpx_client import get_async_client
 from .const import (CLIENT_API_KEY, CLIENT_BASE_URI, CLIENT_PROJECT_ID,
                     CONF_PROJECT_ID, DOMAIN, LOGGER)
 
-PLATFORMS = (Platform.CONVERSATION,)
+PLATFORMS = (Platform.CONVERSATION, Platform.AI_TASK)
 
 type CloudRUAIConfigEntry = ConfigEntry[openai.AsyncOpenAI]  # type: ignore[name-defined]
 
