@@ -14,7 +14,7 @@ header:
 
     comment: on-failure
 
-  - path: "custom_components/cloud_ru_ai/conversation.py"
+  - path: "custom_components/cloud_ru_ai/entity.py"
 
     license:
       spdx-id: Apache-2.0
