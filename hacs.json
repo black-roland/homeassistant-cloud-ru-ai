@@ -1,6 +1,7 @@
 {
   "name": "Cloud.ru Foundation Models",
   "render_readme": true,
+  "homeassistant": "2026.9.0b0",
   "zip_release": true,
   "filename": "cloud_ru_ai.zip"
 }
