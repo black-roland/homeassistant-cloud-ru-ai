@@ -44,7 +44,7 @@ from openai.types.chat.chat_completion_message_function_tool_call_param import \
 from openai.types.shared_params import (FunctionDefinition,
                                         ResponseFormatJSONSchema)
 from openai.types.shared_params.response_format_json_schema import JSONSchema
-from voluptuous_openapi import convert
+from probatio import to_openapi
 
 from . import CloudRUAIConfigEntry
 from .const import (CONF_CHAT_MODEL, CONF_MAX_TOKENS, CONF_TEMPERATURE,
@@ -83,7 +83,7 @@ def _format_structured_output(
 ) -> JSONSchema:
     """Format the schema to be compatible with Cloud.ru API."""
     result: JSONSchema = {"name": name, "strict": True}
-    result_schema = convert(
+    result_schema = to_openapi(
         schema,
         custom_serializer=llm_api.custom_serializer if llm_api else llm.selector_serializer,
     )
@@ -96,7 +96,7 @@ def _format_tool(
     tool: llm.Tool, custom_serializer: Callable[[Any], Any] | None
 ) -> ChatCompletionToolParam:
     """Format tool specification (exact copy of your original)."""
-    params = convert(tool.parameters, custom_serializer=custom_serializer)
+    params = to_openapi(tool.parameters, custom_serializer=custom_serializer)
 
     if not tool.parameters.schema:
         params = {"type": "object", "properties": {}, "additionalProperties": False}
